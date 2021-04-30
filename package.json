@@ -1,0 +1,32 @@
+{
+    "name": "linka",
+    "version": "1.0.0",
+    "description": "Linka Project",
+    "main": "server.js",
+    "directories": {
+        "doc": "docs"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@gitlab.com/Carlos.G.R/linka.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/Carlos.G.R/linka/issues"
+    },
+    "homepage": "https://gitlab.com/Carlos.G.R/linka#readme",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "joi": "^17.4.0",
+        "jsonwebtoken": "^8.5.1",
+        "mysql2": "^2.2.5",
+        "sql-template-strings": "^2.2.2"
+    }
+}

@@ -15,43 +15,42 @@
 -   url_twitter
 -   fecha_registro
 -   fecha_modificacion
--   active
+-   active (?)
 
 ### Tabla publicaciones
 
 -   id
--   titulo \*
+-   titulo
 -   descripcion_usuario
--   image_prev \*\*
--   text_prev \*\*
+-   image_prev (?)
+-   text_prev (?)
 -   tags
 -   visitas
 -   likes
 -   fecha_modificacion
 -   fecha_creacion
--   id_usuario \*
+-   id_usuario
 
 ### Tabla comentarios
 
 -   id
--   text \*
+-   text
 -   fecha_creacion
--   id_usuario \*
--   id_post \*
+-   id_usuario
+-   id_post
 
 ## Backend (API)
 
 ### API Usuarios
 
--   registrarse (crear usuario)
+-   registrarse (crear usuario) 🆗
 -   confirmar cuenta
--   ver información de un usuario
--   editar datos del usuario
--   borrar/desactivar usuario
--   hacer login
+-   ver información de un usuario 🆗
+-   editar datos del usuario 🆗
+-   borrar/desactivar usuario 🆗
+-   hacer login 🆗
 -   recuperar contraseña
--   ver últimas publicaciones visitadas por él
--   ver actividad
+-   ver actividad reciente 🆗
 
 #### Registrarse (crear usuario):
 
@@ -81,31 +80,19 @@
         -   total_imagenes
         -   avatar
 
-#### Ver información otro usuario:
+#### Ver información usuario:
 
 -   Método: GET
 -   URL: `/api/users/:id`
 -   Token: Opcional
 -   Devuelve:
     -   id
-    -   nombre_completo
+    -   username
     -   fecha_registro
-    -   total_imagenes
+    -   publicaciones
     -   avatar
-
-#### Ver información de mi usuario:
-
--   Método: GET
--   URL: `/api/users/:id`
--   Token: Si (el token del usuario que estoy viendo)
--   Devuelve:
-    -   id
-    -   email
-    -   nombre_completo
-    -   biografia
-    -   avatar
-    -   fecha_registro
-    -   fecha_modificacion
+    -   bio
+    -   redes/site
 
 #### Editar datos de un usuario:
 
@@ -114,10 +101,10 @@
 -   Token: Si (el token del usuario que estoy editando)
 -   Body:
     -   email
-    -   password?
-    -   nombre_completo
+    -   password
     -   biografia
     -   avatar
+    -   redes/site
 
 #### Borrar un Usuario:
 
@@ -151,6 +138,7 @@
 -   ver datos una imagen
 -   editar datos de imagen
 -   borrar imagen
+-   ver últimas publicaciones visitadas 🆗
 
 #### Listar imagenes:
 
@@ -161,6 +149,24 @@
     /api/images?user=33&sort=top_
 -   Método: GET
 -   URL: `/api/images`
+-   Token: opcional
+-   Querystring (ver ejemplos)
+-   Devuelve:
+    -   Array de información de imagen:
+        -   id
+        -   titulo
+        -   descripcion
+        -   fichero
+        -   usuario: (haciendo JOIN)
+        -   id
+        -   nombre_completo
+        -   fecha_creacion
+        -   count_comentarios
+
+#### Ver últimas publicaciones visitadas por usuario:
+
+-   Método: GET
+-   URL: `/api/posts/:userId`
 -   Token: opcional
 -   Querystring (ver ejemplos)
 -   Devuelve:
