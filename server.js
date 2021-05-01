@@ -19,6 +19,7 @@ app.use(express.json());
 // * USERS
 
 app.post('/api/users', usersController.registerUser);
+app.post('/api/users/login', usersController.loginUser);
 app.get('/api/users/:username', usersController.getUserByName);
 
 // * POSTS

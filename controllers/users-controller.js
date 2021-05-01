@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const { usersRepository } = require('../repos');
 
@@ -81,7 +82,52 @@ async function registerUser(req, res, next) {
     }
 }
 
+async function loginUser(req, res, next) {
+    try {
+        const { email, password } = req.body;
+
+        const schema = Joi.object({
+            email: Joi.string().email().required(),
+            password: Joi.string().min(5).max(20).required(),
+        });
+
+        await schema.validateAsync({ email, password });
+
+        const user = await usersRepository.getUserByEmail(email);
+
+        if (!user) {
+            const error = new Error(`User doesn't exist.`);
+            error.code = 401;
+
+            throw error;
+        }
+
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if (!isValidPassword) {
+            const error = new Error('Wrong password.');
+            error.code = 401;
+
+            throw error;
+        }
+
+        const tokenPayload = { UUID: user.UUID };
+
+        const token = jwt.sign(tokenPayload, process.env.SECRET, {
+            expiresIn: '3d',
+        });
+
+        res.send({
+            id: user.id,
+            token,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     getUserByName,
     registerUser,
+    loginUser,
 };
