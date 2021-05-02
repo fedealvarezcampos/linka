@@ -21,6 +21,7 @@
     },
     "homepage": "https://gitlab.com/Carlos.G.R/linka#readme",
     "dependencies": {
+        "@sendgrid/mail": "^7.4.2",
         "bcryptjs": "^2.4.3",
         "date-fns": "^2.21.1",
         "dotenv": "^8.2.0",

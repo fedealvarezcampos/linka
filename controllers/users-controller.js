@@ -1,6 +1,8 @@
 const Joi = require('joi');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { usersRepository } = require('../repos');
 
@@ -23,7 +25,7 @@ async function registerUser(req, res, next) {
         const { username, email, password, confirmPass } = req.body;
 
         const schema = Joi.object({
-            username: Joi.string().min(5).max(15).required(),
+            username: Joi.string().min(4).max(18).required(),
             email: Joi.string().email().required(),
             password: Joi.string().min(5).max(20).required(),
             confirmPass: Joi.string().min(5).max(20).required(),
@@ -70,6 +72,20 @@ async function registerUser(req, res, next) {
             email,
             password: passwordHash,
         });
+
+        const msg = {
+            to: `${newUser.email}`,
+            from: 'linka.noreply@gmail.com',
+            subject: 'Sending with Twilio SendGrid is Fun',
+            templateId: 'd-115445c28a684e788f3197a79251ec9d',
+            dynamicTemplateData: {
+                name: newUser.username,
+                header: 'localhost:3000',
+                uuid: newUser.UUID,
+            },
+        };
+
+        await sgMail.send(msg);
 
         res.status(201);
         res.send({
