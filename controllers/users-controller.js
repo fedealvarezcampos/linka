@@ -80,7 +80,7 @@ async function registerUser(req, res, next) {
             templateId: 'd-115445c28a684e788f3197a79251ec9d',
             dynamicTemplateData: {
                 name: newUser.username,
-                header: 'localhost:3000',
+                header: req.headers.host,
                 uuid: newUser.UUID,
             },
         };
