@@ -22,14 +22,26 @@ const insertUser = async data => {
     const regDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
     const newUUID = uuidv4();
 
-    const query = SQL`INSERT INTO users (username, email, password, UUID, reg_date) VALUES (${data.username}, ${data.email}, ${data.password}, ${newUUID}, ${regDate})`;
+    const query = SQL`INSERT INTO users (username, email, password, UUID, regDate) VALUES (${data.username}, ${data.email}, ${data.password}, ${newUUID}, ${regDate})`;
     await database.pool.query(query);
 
     return getUserByEmail(data.email);
 };
 
+async function updateUser(username, data) {
+    const { password, bio, userSite, userTW, userIG } = data;
+    const newDate = new Date();
+    const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
+
+    const updateQuery = SQL`UPDATE users SET password = ${password}, bio = ${bio}, userSite = ${userSite}, userTW = ${userTW}, userIG = ${userIG}, editDate = ${editDate} WHERE username = ${username}`;
+    const [rows] = await database.pool.query(updateQuery);
+
+    return getUserByName(username);
+}
+
 module.exports = {
     getUserByName,
     getUserByEmail,
     insertUser,
+    updateUser,
 };

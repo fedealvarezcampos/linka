@@ -82,6 +82,76 @@ async function registerUser(req, res, next) {
     }
 }
 
+async function updateUser(req, res, next) {
+    try {
+        const { username } = req.params;
+        const {
+            password,
+            confirmPass,
+            bio,
+            userSite,
+            userTW,
+            userIG,
+        } = req.body;
+
+        const schema = Joi.object({
+            password: Joi.string().min(5).max(20),
+            confirmPass: Joi.string().min(5).max(20),
+            bio: Joi.string().min(5).max(100),
+            userSite: Joi.string().min(5).max(50),
+            userTW: Joi.string().min(5).max(50),
+            userIG: Joi.string().min(5).max(50),
+        });
+
+        await schema.validateAsync({
+            password,
+            confirmPass,
+            bio,
+            userSite,
+            userTW,
+            userIG,
+        });
+
+        const userWithUsername = await usersRepository.getUserByName(username);
+
+        if (!userWithUsername) {
+            const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        if (password !== confirmPass) {
+            const err = new Error(
+                'Password and confirmed password must be the same.'
+            );
+            err.code = 400;
+
+            throw err;
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const updatedUser = await usersRepository.updateUser(username, {
+            password: passwordHash,
+            bio,
+            userSite,
+            userTW,
+            userIG,
+        });
+
+        res.send({
+            username,
+            bio,
+            userSite,
+            userTW,
+            userIG,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function loginUser(req, res, next) {
     try {
         const { email, password } = req.body;
@@ -130,4 +200,5 @@ module.exports = {
     getUserByName,
     registerUser,
     loginUser,
+    updateUser,
 };
