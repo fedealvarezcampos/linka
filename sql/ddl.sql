@@ -53,7 +53,3 @@ CREATE TABLE `comments` (
     REFERENCES posts(id)
     ON DELETE CASCADE
 );
-
---@block
-
-DELETE FROM users WHERE username = "Fede";

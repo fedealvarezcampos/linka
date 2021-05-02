@@ -17,6 +17,13 @@ const getUserByEmail = async email => {
     return users[0];
 };
 
+const getUserByUUID = async UUID => {
+    const query = SQL`SELECT * FROM users WHERE UUID = ${UUID}`;
+    const [users] = await database.pool.query(query);
+
+    return users[0];
+};
+
 const insertUser = async data => {
     const newDate = new Date();
     const regDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
@@ -39,9 +46,18 @@ async function updateUser(username, data) {
     return getUserByName(username);
 }
 
+async function validateUser(UUID) {
+    const updateQuery = SQL`UPDATE users SET verified = true WHERE UUID = ${UUID}`;
+    const [rows] = await database.pool.query(updateQuery);
+
+    return rows[0];
+}
+
 module.exports = {
     getUserByName,
     getUserByEmail,
+    getUserByUUID,
     insertUser,
     updateUser,
+    validateUser,
 };

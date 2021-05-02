@@ -21,7 +21,7 @@ app.use(express.json());
 app.post('/api/users', usersController.registerUser);
 app.post('/api/users/login', usersController.loginUser);
 app.get('/api/users/:username', usersController.getUserByName);
-// app.get('/api/users/validate/:UUID'), usersController.validateUser);
+app.get('/api/users/validate/:UUID', usersController.validateUser);
 app.put('/api/users/:username', usersController.updateUser);
 
 // * POSTS

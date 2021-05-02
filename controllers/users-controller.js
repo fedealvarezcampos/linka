@@ -76,7 +76,6 @@ async function registerUser(req, res, next) {
         const msg = {
             to: `${newUser.email}`,
             from: 'linka.noreply@gmail.com',
-            subject: 'Sending with Twilio SendGrid is Fun',
             templateId: 'd-115445c28a684e788f3197a79251ec9d',
             dynamicTemplateData: {
                 name: newUser.username,
@@ -212,9 +211,41 @@ async function loginUser(req, res, next) {
     }
 }
 
+async function validateUser(req, res, next) {
+    try {
+        const { UUID } = req.params;
+
+        const user = await usersRepository.getUserByUUID(UUID);
+
+        if (!user) {
+            const error = new Error(`Invalid ID.`);
+            error.code = 401;
+
+            throw error;
+        }
+
+        if (user.verified === 1) {
+            const error = new Error(`User is already verified.`);
+            error.code = 401;
+
+            throw error;
+        }
+
+        await usersRepository.validateUser(UUID);
+
+        res.send({
+            id: user.id,
+            username: user.username,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     getUserByName,
     registerUser,
     loginUser,
     updateUser,
+    validateUser,
 };
