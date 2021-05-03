@@ -10,6 +10,13 @@ const getUserByName = async username => {
     return users[0];
 };
 
+const getUserById = async id => {
+    const query = SQL`SELECT * FROM users WHERE id = ${id}`;
+    const [users] = await database.pool.query(query);
+
+    return users[0];
+};
+
 const getUserByEmail = async email => {
     const query = SQL`SELECT * FROM users WHERE email = ${email}`;
     const [users] = await database.pool.query(query);
@@ -57,6 +64,7 @@ module.exports = {
     getUserByName,
     getUserByEmail,
     getUserByUUID,
+    getUserById,
     insertUser,
     updateUser,
     validateUser,

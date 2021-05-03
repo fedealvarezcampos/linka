@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const express = require('express');
 
-const { usersController } = require('./controllers');
+const { usersController, commentsController } = require('./controllers');
 
 const { validateAuth } = require('./middlewares');
 
@@ -29,6 +29,12 @@ app.put('/api/users/:username', validateAuth, usersController.updateUser);
 // * POSTS
 
 // * COMMENTS
+
+app.post(
+    '/api/posts/:id/comments',
+    validateAuth,
+    commentsController.postComment
+);
 
 // prettier-ignore
 app.use(async (err, req, res, next) => {

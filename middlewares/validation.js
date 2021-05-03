@@ -16,7 +16,7 @@ async function validateAuth(req, res, next) {
         const token = authorization.slice(7, authorization.length);
         const decodedToken = jwt.verify(token, process.env.SECRET);
 
-        const query = SQL`SELECT * FROM users WHERE UUID = ${decodedToken.UUID}`;
+        const query = SQL`SELECT * FROM users WHERE id = ${decodedToken.id}`;
         const [users] = await database.pool.query(query);
 
         if (!users || !users.length) {

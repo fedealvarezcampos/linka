@@ -39,6 +39,8 @@ CREATE TABLE `posts` (
   PRIMARY KEY (`id`)
 );
 
+--@block
+
 CREATE TABLE `comments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `userId` int NOT NULL,

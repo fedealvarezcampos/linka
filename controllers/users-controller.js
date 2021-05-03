@@ -205,7 +205,7 @@ async function loginUser(req, res, next) {
             throw error;
         }
 
-        const tokenPayload = { UUID: user.UUID };
+        const tokenPayload = { id: user.id };
 
         const token = jwt.sign(tokenPayload, process.env.SECRET, {
             expiresIn: '5d',
