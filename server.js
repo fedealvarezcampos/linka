@@ -20,8 +20,10 @@ app.use(express.json());
 
 app.post('/api/users', usersController.registerUser);
 app.post('/api/users/login', usersController.loginUser);
+app.post('/api/users/recoverpass', usersController.recoverPass);
 app.get('/api/users/:username', usersController.getUserByName);
 app.get('/api/users/validate/:UUID', usersController.validateUser);
+app.get('/api/users/recover/:UUID', usersController.recoverPassGetter);
 app.put('/api/users/:username', usersController.updateUser);
 
 // * POSTS
@@ -30,7 +32,7 @@ app.put('/api/users/:username', usersController.updateUser);
 
 // prettier-ignore
 app.use(async (err, req, res, next) => {
-    const status = err.isJoi ? 400 : (err.status || 500);
+    const status = err.isJoi ? 400 : (err.code || 500);
     res.status(status);
     res.send({ resultado: 'ERROR', error: err.message });
 });

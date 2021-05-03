@@ -211,6 +211,80 @@ async function loginUser(req, res, next) {
     }
 }
 
+async function recoverPass(req, res, next) {
+    try {
+        const { email } = req.body;
+
+        const schema = Joi.string().email().required();
+
+        await schema.validateAsync(email);
+
+        const user = await usersRepository.getUserByEmail(email);
+
+        if (!user) {
+            const err = new Error(
+                `No user has been found for that email adress.`
+            );
+            err.code = 409;
+
+            throw err;
+        }
+
+        const msg = {
+            to: `${email}`,
+            from: 'linka.noreply@gmail.com',
+            templateId: 'd-266877db2fae4ad1978c23df4bcb584c',
+            dynamicTemplateData: {
+                name: user.username,
+                header: req.headers.host,
+                uuid: user.UUID,
+            },
+        };
+
+        await sgMail.send(msg);
+
+        res.status(200);
+        res.send({
+            id: user.id,
+            name: user.username,
+            email: user.email,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function recoverPassGetter(req, res, next) {
+    try {
+        const { UUID } = req.params;
+
+        const user = await usersRepository.getUserByUUID(UUID);
+
+        if (!user) {
+            const err = new Error(`User does not exist.`);
+            err.code = 401;
+
+            throw err;
+        }
+
+        if (user.verified === 0) {
+            const err = new Error(
+                `User is not verified, confirm your account first.`
+            );
+            err.code = 401;
+
+            throw err;
+        }
+
+        res.send({
+            id: user.id,
+            username: user.username,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function validateUser(req, res, next) {
     try {
         const { UUID } = req.params;
@@ -248,4 +322,6 @@ module.exports = {
     loginUser,
     updateUser,
     validateUser,
+    recoverPass,
+    recoverPassGetter,
 };
