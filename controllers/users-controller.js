@@ -187,6 +187,15 @@ async function loginUser(req, res, next) {
             throw error;
         }
 
+        if (user.verified === 0) {
+            const err = new Error(
+                `User is not verified, confirm your account first.`
+            );
+            err.code = 401;
+
+            throw err;
+        }
+
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
@@ -199,7 +208,7 @@ async function loginUser(req, res, next) {
         const tokenPayload = { UUID: user.UUID };
 
         const token = jwt.sign(tokenPayload, process.env.SECRET, {
-            expiresIn: '3d',
+            expiresIn: '5d',
         });
 
         res.send({

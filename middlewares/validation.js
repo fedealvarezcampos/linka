@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const SQL = require('sql-template-strings');
 
 const { database } = require('../infrastructure');
 
@@ -7,19 +8,19 @@ async function validateAuth(req, res, next) {
         const { authorization } = req.headers;
 
         if (!authorization || !authorization.startsWith('Bearer ')) {
-            const error = new Error('Authorization header required');
+            const error = new Error('Authorization header required.');
             error.code = 401;
             throw error;
         }
 
         const token = authorization.slice(7, authorization.length);
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const decodedToken = jwt.verify(token, process.env.SECRET);
 
-        const query = 'SELECT * FROM users WHERE id = ?';
-        const [users] = await database.pool.query(query, decodedToken.id);
+        const query = SQL`SELECT * FROM users WHERE UUID = ${decodedToken.UUID}`;
+        const [users] = await database.pool.query(query);
 
         if (!users || !users.length) {
-            const error = new Error('El usuario ya no existe');
+            const error = new Error('User does not exist.');
             error.code = 401;
             throw error;
         }
@@ -27,8 +28,7 @@ async function validateAuth(req, res, next) {
         req.auth = decodedToken;
         next();
     } catch (err) {
-        res.status(err.status || 500);
-        res.send({ error: err.message });
+        next(err);
     }
 }
 

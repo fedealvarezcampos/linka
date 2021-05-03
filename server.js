@@ -7,7 +7,7 @@ const express = require('express');
 
 const { usersController } = require('./controllers');
 
-// const { validateAuth } = require('./middlewares');
+const { validateAuth } = require('./middlewares');
 
 const { PORT } = process.env;
 
@@ -24,7 +24,7 @@ app.post('/api/users/recoverpass', usersController.recoverPass);
 app.get('/api/users/:username', usersController.getUserByName);
 app.get('/api/users/validate/:UUID', usersController.validateUser);
 app.get('/api/users/recover/:UUID', usersController.recoverPassGetter);
-app.put('/api/users/:username', usersController.updateUser);
+app.put('/api/users/:username', validateAuth, usersController.updateUser);
 
 // * POSTS
 

@@ -1,4 +1,4 @@
-const { validateAuth } = require('./validate-auth');
+const { validateAuth } = require('./validation');
 
 module.exports = {
     validateAuth,
