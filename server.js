@@ -45,12 +45,7 @@ app.post('/api/users/recoverpass', usersController.recoverPass);
 app.get('/api/users/:username', usersController.getUserByName);
 app.get('/api/users/validate/:UUID', usersController.validateUser);
 app.get('/api/users/recover/:UUID', usersController.recoverPassGetter);
-app.put(
-    '/api/users/:username',
-    validateAuth,
-    uploadAvatar.single('avatar'),
-    usersController.updateUser
-);
+app.put('/api/users/:username', validateAuth, uploadAvatar.single('avatar'), usersController.updateUser);
 
 // * POSTS
 
