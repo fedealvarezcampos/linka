@@ -8,7 +8,7 @@ async function validateAuth(req, res, next) {
         const { authorization } = req.headers;
 
         if (!authorization || !authorization.startsWith('Bearer ')) {
-            const error = new Error('Authorization header required.');
+            const error = new Error('Authorization required.');
             error.code = 401;
             throw error;
         }

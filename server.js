@@ -30,11 +30,9 @@ app.put('/api/users/:username', validateAuth, usersController.updateUser);
 
 // * COMMENTS
 
-app.post(
-    '/api/posts/:id/comments',
-    validateAuth,
-    commentsController.postComment
-);
+app.get('/api/posts/:id/comments', commentsController.getComments);
+app.post('/api/posts/:id/comments', validateAuth, commentsController.postComment);
+app.delete('/api/posts/:id/comments/:id_comment', validateAuth, commentsController.eraseComment);
 
 // prettier-ignore
 app.use(async (err, req, res, next) => {
