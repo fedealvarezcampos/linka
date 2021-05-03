@@ -1,3 +1,5 @@
 node_modules
 .env
 .vscode
+localhost.session.sql
+static

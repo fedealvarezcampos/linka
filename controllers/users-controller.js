@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const { usersRepository } = require('../repos');
+const { usersRepository, imagesRepository } = require('../repos');
 
 async function getUserByName(req, res, next) {
     try {
@@ -39,9 +39,7 @@ async function registerUser(req, res, next) {
         });
 
         if (password !== confirmPass) {
-            const err = new Error(
-                'Password and confirmed password must be the same.'
-            );
+            const err = new Error('Password and confirmed password must be the same.');
             err.code = 400;
 
             throw err;
@@ -99,15 +97,10 @@ async function registerUser(req, res, next) {
 
 async function updateUser(req, res, next) {
     try {
+        const { id } = req.auth;
+        const { file } = req;
         const { username } = req.params;
-        const {
-            password,
-            confirmPass,
-            bio,
-            userSite,
-            userTW,
-            userIG,
-        } = req.body;
+        const { password, confirmPass, bio, userSite, userTW, userIG } = req.body;
 
         const schema = Joi.object({
             password: Joi.string().min(5).max(20),
@@ -127,9 +120,9 @@ async function updateUser(req, res, next) {
             userIG,
         });
 
-        const userWithUsername = await usersRepository.getUserByName(username);
+        const user = await usersRepository.getUserByName(username);
 
-        if (!userWithUsername) {
+        if (!user) {
             const err = new Error(`User does not exist.`);
             err.code = 409;
 
@@ -137,9 +130,7 @@ async function updateUser(req, res, next) {
         }
 
         if (password !== confirmPass) {
-            const err = new Error(
-                'Password and confirmed password must be the same.'
-            );
+            const err = new Error('Password and confirmed password must be the same.');
             err.code = 400;
 
             throw err;
@@ -147,7 +138,7 @@ async function updateUser(req, res, next) {
 
         const passwordHash = await bcrypt.hash(password, 10);
 
-        const updatedUser = await usersRepository.updateUser(username, {
+        await usersRepository.updateUser(username, {
             password: passwordHash,
             bio,
             userSite,
@@ -155,12 +146,16 @@ async function updateUser(req, res, next) {
             userIG,
         });
 
+        const url = `static/images/${id}/${file.filename}`;
+        const image = await imagesRepository.updateAvatar(id, url);
+
         res.send({
             username,
             bio,
             userSite,
             userTW,
             userIG,
+            avatar: image,
         });
     } catch (err) {
         next(err);
@@ -188,9 +183,7 @@ async function loginUser(req, res, next) {
         }
 
         if (user.verified === 0) {
-            const err = new Error(
-                `User is not verified, confirm your account first.`
-            );
+            const err = new Error(`User is not verified, confirm your account first.`);
             err.code = 401;
 
             throw err;
@@ -231,9 +224,7 @@ async function recoverPass(req, res, next) {
         const user = await usersRepository.getUserByEmail(email);
 
         if (!user) {
-            const err = new Error(
-                `No user has been found for that email adress.`
-            );
+            const err = new Error(`No user has been found for that email adress.`);
             err.code = 409;
 
             throw err;
@@ -277,9 +268,7 @@ async function recoverPassGetter(req, res, next) {
         }
 
         if (user.verified === 0) {
-            const err = new Error(
-                `User is not verified, confirm your account first.`
-            );
+            const err = new Error(`User is not verified, confirm your account first.`);
             err.code = 401;
 
             throw err;
