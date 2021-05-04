@@ -60,6 +60,20 @@ async function validateUser(UUID) {
     return rows[0];
 }
 
+const getRecentActivity = async id => {
+    const query = SQL`SELECT users.avatar AS "avatar",
+        users.username AS "username",
+        comments.text AS "comment",
+        comments.created_date AS "commentDate"
+        FROM comments INNER JOIN posts ON postId = posts.id
+        INNER JOIN users ON users.id = comments.userId
+        WHERE comments.userId != ${id} && posts.userId = ${id} ORDER BY commentDate DESC`;
+
+    const [comments] = await database.pool.query(query);
+
+    return comments;
+};
+
 module.exports = {
     getUserByName,
     getUserByEmail,
@@ -68,4 +82,5 @@ module.exports = {
     insertUser,
     updateUser,
     validateUser,
+    getRecentActivity,
 };

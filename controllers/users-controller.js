@@ -20,6 +20,38 @@ async function getUserByName(req, res, next) {
     }
 }
 
+async function getRecentActivity(req, res, next) {
+    try {
+        const { id } = req.auth;
+        const { username } = req.params;
+        const schema = Joi.number().positive().required();
+        await schema.validateAsync(id);
+
+        const user = await usersRepository.getUserById(id);
+        const userWithName = await usersRepository.getUserByName(username);
+
+        if (!user) {
+            const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        if (!userWithName) {
+            const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        const activity = await usersRepository.getRecentActivity(id);
+
+        res.send(activity);
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function registerUser(req, res, next) {
     try {
         const { username, email, password, confirmPass } = req.body;
@@ -322,4 +354,5 @@ module.exports = {
     validateUser,
     recoverPass,
     recoverPassGetter,
+    getRecentActivity,
 };
