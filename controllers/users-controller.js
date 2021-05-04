@@ -243,6 +243,43 @@ async function changePass(req, res, next) {
     }
 }
 
+async function deleteUser(req, res, next) {
+    try {
+        const { id } = req.auth;
+        const { username } = req.params;
+
+        const schema = Joi.number().positive();
+
+        await schema.validateAsync(id);
+
+        const user = await usersRepository.getUserById(id);
+        const userHasUsername = await usersRepository.getUserByName(username);
+
+        if (!user) {
+            const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        if (!userHasUsername) {
+            const err = new Error(`Username does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        const deletedUser = await usersRepository.deleteUser(id);
+
+        res.send({
+            id: deletedUser.id,
+            username: deletedUser.username,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function loginUser(req, res, next) {
     try {
         const { email, password } = req.body;
@@ -400,6 +437,7 @@ module.exports = {
     registerUser,
     loginUser,
     updateUser,
+    deleteUser,
     changePass,
     validateUser,
     recoverPass,

@@ -53,6 +53,18 @@ async function updateUser(username, data) {
     return getUserByName(username);
 }
 
+async function deleteUser(id) {
+    const newDate = new Date();
+    const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
+    const deleteString = 'Account suspended.';
+    const newUUID = uuidv4();
+
+    const updateQuery = SQL`UPDATE users SET email = ${newUUID}, username = ${deleteString}, verified = false, editDate = ${editDate} WHERE id = ${id}`;
+    await database.pool.query(updateQuery);
+
+    return getUserById(id);
+}
+
 async function changePass(data) {
     const { password, username } = data;
     const newDate = new Date();
@@ -93,6 +105,7 @@ module.exports = {
     getUserById,
     insertUser,
     updateUser,
+    deleteUser,
     changePass,
     validateUser,
     getRecentActivity,

@@ -48,6 +48,7 @@ app.get('/api/users/validate/:UUID', usersController.validateUser);
 app.get('/api/users/recover/:UUID', usersController.recoverPassGetter);
 app.get('/api/users/:username/activity', validateAuth, usersController.getRecentActivity);
 app.put('/api/users/:username', validateAuth, uploadAvatar.single('avatar'), usersController.updateUser);
+app.delete('/api/users/:username', validateAuth, usersController.deleteUser);
 
 // * POSTS
 
