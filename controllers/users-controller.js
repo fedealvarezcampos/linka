@@ -194,6 +194,55 @@ async function updateUser(req, res, next) {
     }
 }
 
+async function changePass(req, res, next) {
+    try {
+        const { password, confirmPass, email } = req.body;
+
+        const schema = Joi.object({
+            password: Joi.string().min(5).max(20),
+            confirmPass: Joi.string().min(5).max(20),
+            email: Joi.string().email().required(),
+        });
+
+        await schema.validateAsync({
+            password,
+            confirmPass,
+            email,
+        });
+
+        const user = await usersRepository.getUserByEmail(email);
+
+        if (!user) {
+            const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        if (password !== confirmPass) {
+            const err = new Error('Password and confirmed password must be the same.');
+            err.code = 400;
+
+            throw err;
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        await usersRepository.changePass({
+            password: passwordHash,
+            username: user.username,
+        });
+
+        res.send({
+            id: user.id,
+            username: user.username,
+            email,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function loginUser(req, res, next) {
     try {
         const { email, password } = req.body;
@@ -351,6 +400,7 @@ module.exports = {
     registerUser,
     loginUser,
     updateUser,
+    changePass,
     validateUser,
     recoverPass,
     recoverPassGetter,

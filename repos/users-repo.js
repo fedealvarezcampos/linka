@@ -48,7 +48,18 @@ async function updateUser(username, data) {
     const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
 
     const updateQuery = SQL`UPDATE users SET password = ${password}, bio = ${bio}, userSite = ${userSite}, userTW = ${userTW}, userIG = ${userIG}, editDate = ${editDate} WHERE username = ${username}`;
-    const [rows] = await database.pool.query(updateQuery);
+    await database.pool.query(updateQuery);
+
+    return getUserByName(username);
+}
+
+async function changePass(data) {
+    const { password, username } = data;
+    const newDate = new Date();
+    const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
+
+    const updateQuery = SQL`UPDATE users SET password = ${password}, editDate = ${editDate} WHERE username = ${username}`;
+    await database.pool.query(updateQuery);
 
     return getUserByName(username);
 }
@@ -67,7 +78,8 @@ const getRecentActivity = async id => {
         comments.created_date AS "commentDate"
         FROM comments INNER JOIN posts ON postId = posts.id
         INNER JOIN users ON users.id = comments.userId
-        WHERE comments.userId != ${id} && posts.userId = ${id} ORDER BY commentDate DESC`;
+        WHERE comments.userId != ${id} && posts.userId = ${id}
+        ORDER BY commentDate DESC`;
 
     const [comments] = await database.pool.query(query);
 
@@ -81,6 +93,7 @@ module.exports = {
     getUserById,
     insertUser,
     updateUser,
+    changePass,
     validateUser,
     getRecentActivity,
 };
