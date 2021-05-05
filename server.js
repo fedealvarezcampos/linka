@@ -5,7 +5,11 @@ const express = require("express");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 
-const { usersController, commentsController } = require("./controllers");
+const {
+  usersController,
+  commentsController,
+  postsController,
+} = require("./controllers");
 
 const { validateAuth } = require("./middlewares");
 
@@ -61,6 +65,8 @@ app.put(
 app.delete("/api/users/:username", validateAuth, usersController.deleteUser);
 
 // * POSTS
+
+app.post("/api/posts", validateAuth, postsController.createPost);
 
 // * COMMENTS
 

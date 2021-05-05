@@ -190,7 +190,7 @@ async function updateUser(req, res, next) {
       userIG,
     });
 
-    const url = `static/images/${id}/${file.filename}`;
+    const url = `images/${id}/${file.filename}`;
     const image = await imagesRepository.updateAvatar(id, url);
 
     res.send({
