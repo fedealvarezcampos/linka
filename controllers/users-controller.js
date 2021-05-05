@@ -6,15 +6,23 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { usersRepository, imagesRepository } = require('../repos');
 
-async function getUserByName(req, res, next) {
+async function getProfile(req, res, next) {
     try {
         const { username } = req.params;
-        const schema = Joi.string().min(5).max(15).required();
+        const schema = Joi.string().min(4).max(15).required();
         await schema.validateAsync(username);
 
         const user = await usersRepository.getUserByName(username);
 
-        res.send(user);
+        res.send({
+            id: user.id,
+            username: user.username,
+            bio: user.bio,
+            avatar: user.avatar,
+            userSite: user.userSite,
+            userTW: user.userTW,
+            userIG: user.userIG,
+        });
     } catch (err) {
         next(err);
     }
@@ -372,7 +380,7 @@ async function recoverPass(req, res, next) {
     }
 }
 
-async function recoverPassGetter(req, res, next) {
+async function recoverPassListener(req, res, next) {
     try {
         const { UUID } = req.params;
 
@@ -433,7 +441,7 @@ async function validateUser(req, res, next) {
 }
 
 module.exports = {
-    getUserByName,
+    getProfile,
     registerUser,
     loginUser,
     updateUser,
@@ -441,6 +449,6 @@ module.exports = {
     changePass,
     validateUser,
     recoverPass,
-    recoverPassGetter,
+    recoverPassListener,
     getRecentActivity,
 };

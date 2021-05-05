@@ -59,7 +59,7 @@ async function deleteUser(id) {
     const deleteString = 'Account suspended.';
     const newUUID = uuidv4();
 
-    const updateQuery = SQL`UPDATE users SET email = ${newUUID}, username = ${deleteString}, verified = false, editDate = ${editDate} WHERE id = ${id}`;
+    const updateQuery = SQL`UPDATE users SET email = ${newUUID}, username = ${deleteString}, verified = false, bio = null, avatar = null, userSite = null, userTW = null, userIG = null, editDate = ${editDate} WHERE id = ${id}`;
     await database.pool.query(updateQuery);
 
     return getUserById(id);
