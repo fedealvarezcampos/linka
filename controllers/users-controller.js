@@ -323,7 +323,10 @@ async function recoverPass(req, res, next) {
     try {
         const { email } = req.body;
 
-        const schema = Joi.string().email().required();
+        const schema = Joi.string()
+            .email()
+            .required()
+            .error(() => new Error('Not a valid e-mail.'));
 
         await schema.validateAsync(email);
 
