@@ -1,9 +1,6 @@
 CREATE DATABASE IF NOT EXISTS linka_db;
 
---@block
 USE linka_db;
-
---@block
 
 CREATE TABLE `users` (
     `id` int NOT NULL AUTO_INCREMENT,
@@ -38,8 +35,6 @@ CREATE TABLE `posts` (
     ON DELETE CASCADE,
   PRIMARY KEY (`id`)
 );
-
---@block
 
 CREATE TABLE `comments` (
   `id` int NOT NULL AUTO_INCREMENT,
