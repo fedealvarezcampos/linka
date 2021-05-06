@@ -1,90 +1,90 @@
-const SQL = require('sql-template-strings');
-const { format } = require('date-fns');
-const { v4: uuidv4 } = require('uuid');
-const { database } = require('../infrastructure');
+const SQL = require("sql-template-strings");
+const { format } = require("date-fns");
+const { v4: uuidv4 } = require("uuid");
+const { database } = require("../infrastructure");
 
-const getUserByName = async username => {
-    const query = SQL`SELECT * FROM users WHERE username = ${username}`;
-    const [users] = await database.pool.query(query);
+const getUserByName = async (username) => {
+  const query = SQL`SELECT * FROM users WHERE username = ${username}`;
+  const [users] = await database.pool.query(query);
 
-    return users[0];
+  return users[0];
 };
 
-const getUserById = async id => {
-    const query = SQL`SELECT * FROM users WHERE id = ${id}`;
-    const [users] = await database.pool.query(query);
+const getUserById = async (id) => {
+  const query = SQL`SELECT * FROM users WHERE id = ${id}`;
+  const [users] = await database.pool.query(query);
 
-    return users[0];
+  return users[0];
 };
 
-const getUserByEmail = async email => {
-    const query = SQL`SELECT * FROM users WHERE email = ${email}`;
-    const [users] = await database.pool.query(query);
+const getUserByEmail = async (email) => {
+  const query = SQL`SELECT * FROM users WHERE email = ${email}`;
+  const [users] = await database.pool.query(query);
 
-    return users[0];
+  return users[0];
 };
 
-const getUserByUUID = async UUID => {
-    const query = SQL`SELECT * FROM users WHERE UUID = ${UUID}`;
-    const [users] = await database.pool.query(query);
+const getUserByUUID = async (UUID) => {
+  const query = SQL`SELECT * FROM users WHERE UUID = ${UUID}`;
+  const [users] = await database.pool.query(query);
 
-    return users[0];
+  return users[0];
 };
 
-const insertUser = async data => {
-    const newDate = new Date();
-    const regDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
-    const newUUID = uuidv4();
+const insertUser = async (data) => {
+  const newDate = new Date();
+  const regDate = format(newDate, "yyyy-MM-dd HH:mm:ss");
+  const newUUID = uuidv4();
 
-    const query = SQL`INSERT INTO users (username, email, password, UUID, regDate) VALUES (${data.username}, ${data.email}, ${data.password}, ${newUUID}, ${regDate})`;
-    await database.pool.query(query);
+  const query = SQL`INSERT INTO users (username, email, password, UUID, regDate) VALUES (${data.username}, ${data.email}, ${data.password}, ${newUUID}, ${regDate})`;
+  await database.pool.query(query);
 
-    return getUserByEmail(data.email);
+  return getUserByEmail(data.email);
 };
 
 async function updateUser(username, data) {
-    const { password, bio, userSite, userTW, userIG } = data;
-    const newDate = new Date();
-    const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
+  const { password, bio, userSite, userTW, userIG } = data;
+  const newDate = new Date();
+  const editDate = format(newDate, "yyyy-MM-dd HH:mm:ss");
 
-    const updateQuery = SQL`UPDATE users SET password = ${password}, bio = ${bio}, userSite = ${userSite}, userTW = ${userTW}, userIG = ${userIG}, editDate = ${editDate} WHERE username = ${username}`;
-    await database.pool.query(updateQuery);
+  const updateQuery = SQL`UPDATE users SET password = ${password}, bio = ${bio}, userSite = ${userSite}, userTW = ${userTW}, userIG = ${userIG}, editDate = ${editDate} WHERE username = ${username}`;
+  await database.pool.query(updateQuery);
 
-    return getUserByName(username);
+  return getUserByName(username);
 }
 
 async function deleteUser(id) {
-    const newDate = new Date();
-    const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
-    const deleteString = 'Account suspended.';
-    const newUUID = uuidv4();
+  const newDate = new Date();
+  const editDate = format(newDate, "yyyy-MM-dd HH:mm:ss");
+  const deleteString = "Account suspended.";
+  const newUUID = uuidv4();
 
-    const updateQuery = SQL`UPDATE users SET email = ${newUUID}, username = ${deleteString}, verified = false, bio = null, avatar = null, userSite = null, userTW = null, userIG = null, editDate = ${editDate} WHERE id = ${id}`;
-    await database.pool.query(updateQuery);
+  const updateQuery = SQL`UPDATE users SET email = ${newUUID}, username = ${deleteString}, verified = false, bio = null, avatar = null, userSite = null, userTW = null, userIG = null, editDate = ${editDate} WHERE id = ${id}`;
+  await database.pool.query(updateQuery);
 
-    return getUserById(id);
+  return getUserById(id);
 }
 
 async function changePass(data) {
-    const { password, username } = data;
-    const newDate = new Date();
-    const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
+  const { password, username } = data;
+  const newDate = new Date();
+  const editDate = format(newDate, "yyyy-MM-dd HH:mm:ss");
 
-    const updateQuery = SQL`UPDATE users SET password = ${password}, editDate = ${editDate} WHERE username = ${username}`;
-    await database.pool.query(updateQuery);
+  const updateQuery = SQL`UPDATE users SET password = ${password}, editDate = ${editDate} WHERE username = ${username}`;
+  await database.pool.query(updateQuery);
 
-    return getUserByName(username);
+  return getUserByName(username);
 }
 
 async function validateUser(UUID) {
-    const updateQuery = SQL`UPDATE users SET verified = true WHERE UUID = ${UUID}`;
-    const [rows] = await database.pool.query(updateQuery);
+  const updateQuery = SQL`UPDATE users SET verified = true WHERE UUID = ${UUID}`;
+  const [rows] = await database.pool.query(updateQuery);
 
-    return rows[0];
+  return rows[0];
 }
 
-const getRecentActivity = async id => {
-    const query = SQL`SELECT users.avatar AS "avatar",
+const getRecentActivity = async (id) => {
+  const query = SQL`SELECT users.avatar AS "avatar",
         users.username AS "username",
         comments.text AS "comment",
         comments.created_date AS "commentDate"
@@ -93,20 +93,20 @@ const getRecentActivity = async id => {
         WHERE comments.userId != ${id} && posts.userId = ${id}
         ORDER BY commentDate DESC`;
 
-    const [comments] = await database.pool.query(query);
+  const [comments] = await database.pool.query(query);
 
-    return comments;
+  return comments;
 };
 
 module.exports = {
-    getUserByName,
-    getUserByEmail,
-    getUserByUUID,
-    getUserById,
-    insertUser,
-    updateUser,
-    deleteUser,
-    changePass,
-    validateUser,
-    getRecentActivity,
+  getUserByName,
+  getUserByEmail,
+  getUserByUUID,
+  getUserById,
+  insertUser,
+  updateUser,
+  deleteUser,
+  changePass,
+  validateUser,
+  getRecentActivity,
 };

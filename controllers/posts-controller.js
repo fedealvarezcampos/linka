@@ -53,9 +53,9 @@ async function deletePost(req, res, next) {
   try {
     const { id } = req.params;
 
-    const result = await postsRepository.deletePost(postId);
+    const result = await postsRepository.deletePost(id);
 
-    return res.send(postId);
+    return res.send(id);
   } catch (error) {
     next(error);
   }
