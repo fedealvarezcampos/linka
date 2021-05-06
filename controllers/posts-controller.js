@@ -70,7 +70,11 @@ async function createPost(req, res, next) {
 
         await schema.validateAsync({ link, title, description });
 
-        const linkPreview = await getLinkPreview(link);
+        const linkPreview = await getLinkPreview(link, {
+            headers: {
+                'user-agent': 'googlebot',
+            },
+        });
         console.log(linkPreview);
 
         //Meter los datos en la base de datos (usando una función externa)

@@ -8,6 +8,13 @@ const getPostById = async id => {
     return posts[0];
 };
 
+const getPostsByUserId = async userId => {
+    const query = SQL`SELECT * FROM posts WHERE userId = ${userId} ORDER BY id DESC`;
+    const [posts] = await database.pool.query(query);
+
+    return posts;
+};
+
 const sortPostsByDate = async () => {
     const query = SQL`SELECT * FROM posts ORDER BY created_date DESC`;
     const [posts] = await database.pool.query(query);
@@ -49,6 +56,7 @@ module.exports = {
     insertPost,
     deletePost,
     getPostById,
+    getPostsByUserId,
     sortPostsByDate,
     sortPostsByLikes,
 };

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const { usersRepository, imagesRepository } = require('../repos');
+const { usersRepository, imagesRepository, postsRepository } = require('../repos');
 const { schemaUserProfile, schemaLogin, schemaPassChange, schemaRegister } = require('../helpers/joischema');
 
 async function getProfile(req, res, next) {
@@ -20,6 +20,7 @@ async function getProfile(req, res, next) {
         await schema.validateAsync(username);
 
         const user = await usersRepository.getUserByName(username);
+        const posts = await postsRepository.getPostsByUserId(user.id);
 
         res.send({
             id: user.id,
@@ -29,6 +30,7 @@ async function getProfile(req, res, next) {
             userSite: user.userSite,
             userTW: user.userTW,
             userIG: user.userIG,
+            userPosts: posts,
         });
     } catch (err) {
         next(err);
@@ -177,7 +179,7 @@ async function updateUser(req, res, next) {
             userIG,
         });
 
-        const url = `images/${id}/${file.filename}`;
+        const url = `${req.headers.host}/images/${id}/${file.filename}`;
         const image = await imagesRepository.updateAvatar(id, url);
 
         res.send({
