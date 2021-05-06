@@ -1,11 +1,11 @@
 const SQL = require("sql-template-strings");
 const { database } = require("../infrastructure");
 
-const insertPost = async ({ userId, title, description }) => {
+const insertPost = async ({ link, userId, title, description }) => {
   //creo la query
   const query = SQL`
-    INSERT INTO posts(userId, title, description, created_date)
-    VALUES(${userId}, ${title}, ${description}, ${new Date()});
+    INSERT INTO posts(userId, title, description, link, created_date)
+    VALUES(${link}, ${userId}, ${title}, ${description}, ${new Date()});
   `;
 
   //Ejecuto la query
