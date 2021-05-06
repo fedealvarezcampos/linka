@@ -67,6 +67,7 @@ app.delete("/api/users/:username", validateAuth, usersController.deleteUser);
 // * POSTS
 
 app.post("/api/posts", validateAuth, postsController.createPost);
+app.delete("/api/posts/:id", validateAuth, postsController.createPost);
 
 // * COMMENTS
 

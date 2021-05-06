@@ -49,6 +49,19 @@ async function createPost(req, res, next) {
   }
 }
 
+async function deletePost(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const result = await postsRepository.deletePost(postId);
+
+    return res.send(postId);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   createPost,
+  deletePost,
 };
