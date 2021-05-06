@@ -21,14 +21,18 @@ CREATE TABLE `users` (
     PRIMARY KEY (`id`)
 );
 
+--@block
+
 CREATE TABLE `posts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `userId` int NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `link` varchar(255) NOT NULL,
-  `prevImg` varchar(255) DEFAULT NULL,
-  `prevIxt` varchar(255) DEFAULT NULL,
+  `linkTitle` varchar(255) DEFAULT NULL,
+  `linkImg` varchar(255) DEFAULT NULL,
+  `linkSite` varchar(255) DEFAULT NULL,
+  `linkDesc` varchar(255) DEFAULT NULL,
   `views` int DEFAULT NULL,
   `likes` int DEFAULT NULL,
   `created_date` DATETIME,
@@ -38,6 +42,8 @@ CREATE TABLE `posts` (
     ON DELETE CASCADE,
   PRIMARY KEY (`id`)
 );
+
+--@block
 
 CREATE TABLE `comments` (
   `id` int NOT NULL AUTO_INCREMENT,

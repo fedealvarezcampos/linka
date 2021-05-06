@@ -15,18 +15,20 @@ const sortPostsByDate = async () => {
     return posts;
 };
 
-const insertPost = async ({ link, userId, title, description }) => {
+const insertPost = async data => {
     //creo la query
     const query = SQL`
-    INSERT INTO posts(userId, title, description, link, created_date)
-    VALUES(${userId}, ${title}, ${description}, ${link}, ${new Date()});
+    INSERT INTO posts(userId, title, description, link, linkTitle, linkImg, linkSite, linkDesc, created_date)
+    VALUES(${data.userId}, ${data.title}, ${data.description}, ${data.link}, ${data.linkTitle}, ${
+        data.linkImg
+    }, ${data.linkSite}, ${data.linkDesc}, ${new Date()});
   `;
 
     //Ejecuto la query
     const [result] = await database.pool.query(query);
 
     //Devuelvo información del resultado
-    return result;
+    return getPostById(result.insertId);
 };
 
 const deletePost = async id => {

@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { getLinkPreview } = require('link-preview-js');
 
 const { postsRepository } = require('../repos');
 
@@ -20,7 +21,11 @@ async function getPost(req, res, next) {
             title: post.title,
             link: post.link,
             description: post.description,
-            date: post.created_date,
+            linkTitle: post.linkTitle,
+            linkImg: post.linkImg,
+            linkSite: post.linkSite,
+            linkDesc: post.linkDesc,
+            datePosted: post.created_date,
         });
     } catch (err) {
         next(err);
@@ -64,24 +69,33 @@ async function createPost(req, res, next) {
 
         await schema.validateAsync({ link, title, description });
 
+        const linkPreview = await getLinkPreview(link);
+        console.log(linkPreview);
+
         //Meter los datos en la base de datos (usando una función externa)
         const result = await postsRepository.insertPost({
             link,
             userId: id,
             title,
             description,
+            linkTitle: linkPreview.title,
+            linkImg: linkPreview.images[0],
+            linkSite: linkPreview.siteName,
+            linkDesc: linkPreview.description,
         });
 
-        //Devolver información al usuario de que todo fue bien
         return res.send({
-            status: 'ok',
-            data: {
-                link,
-                id_user: id,
-                id_post: result.insertId,
-                title,
-                description,
-            },
+            postId: result.id,
+            userId: result.userId,
+            title,
+            description,
+            link,
+            linkTitle: result.linkTitle,
+            linkImg: result.linkImg,
+            linkSite: result.linkSite,
+            linkDesc: result.linkDesc,
+            likes: result.likes,
+            created_date: result.created_date,
         });
     } catch (error) {
         next(error);
