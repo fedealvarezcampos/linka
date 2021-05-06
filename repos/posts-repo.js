@@ -15,13 +15,19 @@ const sortPostsByDate = async () => {
     return posts;
 };
 
+const sortPostsByLikes = async () => {
+    const query = SQL`SELECT * FROM posts ORDER BY likes DESC`;
+    const [posts] = await database.pool.query(query);
+
+    return posts;
+};
+
 const insertPost = async data => {
     //creo la query
     const query = SQL`
     INSERT INTO posts(userId, title, description, link, linkTitle, linkImg, linkSite, linkDesc, created_date)
-    VALUES(${data.userId}, ${data.title}, ${data.description}, ${data.link}, ${data.linkTitle}, ${
-        data.linkImg
-    }, ${data.linkSite}, ${data.linkDesc}, ${new Date()});
+    VALUES(${data.userId}, ${data.title}, ${data.description}, ${data.link}, 
+    ${data.linkTitle}, ${data.linkImg}, ${data.linkSite}, ${data.linkDesc}, ${new Date()});
   `;
 
     //Ejecuto la query
@@ -44,4 +50,5 @@ module.exports = {
     deletePost,
     getPostById,
     sortPostsByDate,
+    sortPostsByLikes,
 };

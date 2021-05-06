@@ -53,7 +53,7 @@ app.delete('/api/users/:username', validateAuth, usersController.deleteUser);
 
 // * POSTS
 
-app.get('/api/posts/recent', validateAuth, postsController.getRecentPosts);
+app.get('/api/posts', validateAuth, postsController.sortPosts);
 app.get('/api/posts/:id', validateAuth, postsController.getPost);
 app.post('/api/posts', validateAuth, postsController.createPost);
 app.delete('/api/posts/delete/:id', validateAuth, postsController.deletePost);

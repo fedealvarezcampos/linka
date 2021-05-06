@@ -32,18 +32,19 @@ async function getPost(req, res, next) {
     }
 }
 
-async function getRecentPosts(req, res, next) {
+async function sortPosts(req, res, next) {
     try {
-        const posts = await postsRepository.sortPostsByDate();
+        const { sort } = req.query;
 
-        if (!posts) {
-            const err = new Error(`No posts.`);
-            err.code = 409;
-
-            throw err;
+        if (!sort) {
+            const posts = await postsRepository.sortPostsByDate();
+            res.send(posts);
         }
 
-        res.send(posts);
+        if (sort === 'mostliked') {
+            const posts = await postsRepository.sortPostsByLikes();
+            res.send(posts);
+        }
     } catch (err) {
         next(err);
     }
@@ -118,5 +119,5 @@ module.exports = {
     createPost,
     deletePost,
     getPost,
-    getRecentPosts,
+    sortPosts,
 };
