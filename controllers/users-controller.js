@@ -11,15 +11,15 @@ async function getProfile(req, res, next) {
     try {
         const { username } = req.params;
 
-        const schema = Joi.string()
-            .min(4)
-            .max(20)
-            .required()
-            .error(() => new Error('Username must be 4 to 20 characters long.'));
-
-        await schema.validateAsync(username);
-
         const user = await usersRepository.getUserByName(username);
+
+        if (!user) {
+            const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
         const posts = await postsRepository.getPostsByUserId(user.id);
 
         res.send({
@@ -30,7 +30,7 @@ async function getProfile(req, res, next) {
             userSite: user.userSite,
             userTW: user.userTW,
             userIG: user.userIG,
-            userPosts: posts,
+            userdPosts: posts,
         });
     } catch (err) {
         next(err);
@@ -73,19 +73,19 @@ async function registerUser(req, res, next) {
     try {
         const { username, email, password, confirmPass } = req.body;
 
-        await schemaRegister.validateAsync({
-            username,
-            email,
-            password,
-            confirmPass,
-        });
-
         if (password !== confirmPass) {
             const err = new Error('Password and confirmed password must be the same.');
             err.code = 400;
 
             throw err;
         }
+
+        await schemaRegister.validateAsync({
+            username,
+            email,
+            password,
+            confirmPass,
+        });
 
         const userHasEmail = await usersRepository.getUserByEmail(email);
 
