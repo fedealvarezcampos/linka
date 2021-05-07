@@ -16,6 +16,16 @@ const getComments = async postId => {
     return comments;
 };
 
+const getNumberOfComments = async id => {
+    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN comments WHERE posts.id = comments.postId && posts.id = ${id} GROUP BY posts.id`;
+
+    const [result] = await database.pool.query(query);
+
+    if (result[0]) {
+        return result[0].Total;
+    } else return 0;
+};
+
 const insertComment = async data => {
     const newDate = new Date();
     const postedDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
@@ -41,4 +51,5 @@ module.exports = {
     getCommentById,
     insertComment,
     eraseComment,
+    getNumberOfComments,
 };

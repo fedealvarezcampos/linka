@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { getLinkPreview } = require('link-preview-js');
 
-const { postsRepository } = require('../repos');
+const { postsRepository, commentsRepository } = require('../repos');
 
 async function getPost(req, res, next) {
     try {
@@ -16,6 +16,8 @@ async function getPost(req, res, next) {
             throw err;
         }
 
+        const nOfComments = await commentsRepository.getNumberOfComments(id);
+
         res.send({
             id: post.id,
             title: post.title,
@@ -25,6 +27,7 @@ async function getPost(req, res, next) {
             linkImg: post.linkImg,
             linkSite: post.linkSite,
             linkDesc: post.linkDesc,
+            numberofcomments: nOfComments,
             datePosted: post.created_date,
         });
     } catch (err) {
