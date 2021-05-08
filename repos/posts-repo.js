@@ -44,6 +44,21 @@ const insertPost = async data => {
     return getPostById(result.insertId);
 };
 
+const likePost = async data => {
+    const query = SQL`
+    INSERT INTO likes(userId, postId, liked)
+    VALUES(${data.userId}, ${data.postId}, true);
+  `;
+    await database.pool.query(query);
+};
+
+const isLikedByUserId = async (userId, postId) => {
+    const query = SQL`SELECT * FROM likes WHERE userID = ${userId} && postId = ${postId}`;
+    const [result] = await database.pool.query(query);
+
+    return result[0];
+};
+
 const deletePost = async id => {
     const query = SQL`DELETE FROM posts WHERE id = ${id}`;
 
@@ -55,6 +70,8 @@ const deletePost = async id => {
 module.exports = {
     insertPost,
     deletePost,
+    likePost,
+    isLikedByUserId,
     getPostById,
     getPostsByUserId,
     sortPostsByDate,

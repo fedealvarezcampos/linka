@@ -97,6 +97,28 @@ async function createPost(req, res, next) {
     }
 }
 
+async function likePost(req, res, next) {
+    try {
+        const { id: userId } = req.auth;
+        const { id: postId } = req.params;
+
+        const isLikedAlready = await postsRepository.isLikedByUserId(userId, postId);
+
+        if (isLikedAlready) {
+            const err = new Error(`Already liked.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        const result = await postsRepository.likePost({ userId, postId });
+
+        return res.send(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function deletePost(req, res, next) {
     try {
         const { id } = req.params;
@@ -113,5 +135,6 @@ module.exports = {
     createPost,
     deletePost,
     getPost,
+    likePost,
     sortPosts,
 };
