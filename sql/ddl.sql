@@ -30,11 +30,12 @@ CREATE TABLE `posts` (
   `description` varchar(255) NOT NULL,
   `link` varchar(255) NOT NULL,
   `linkTitle` varchar(255) DEFAULT NULL,
-  `linkImg` varchar(255) DEFAULT NULL,
+  `linkImg` varchar(512) DEFAULT NULL,
   `linkSite` varchar(255) DEFAULT NULL,
   `linkDesc` varchar(255) DEFAULT NULL,
   `views` int DEFAULT NULL,
   `likes` int DEFAULT NULL,
+  `commented` int DEFAULT NULL,
   `created_date` DATETIME,
   `modDate` DATETIME,
   FOREIGN KEY (userId)
@@ -52,6 +53,22 @@ CREATE TABLE `comments` (
   `text` varchar(511) NOT NULL,
   `created_date` DATETIME,
   PRIMARY KEY (`id`),
+  FOREIGN KEY (userId)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+  FOREIGN KEY (postId)
+    REFERENCES posts(id)
+    ON DELETE CASCADE
+);
+
+--@block
+
+CREATE TABLE `likes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL,
+  `postId` int NOT NULL,
+  `liked` BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (id),
   FOREIGN KEY (userId)
     REFERENCES users(id)
     ON DELETE CASCADE,

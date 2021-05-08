@@ -1,5 +1,4 @@
 const SQL = require('sql-template-strings');
-const { format } = require('date-fns');
 const { database } = require('../infrastructure');
 
 const getCommentById = async id => {
@@ -16,8 +15,8 @@ const getComments = async postId => {
     return comments;
 };
 
-const getNumberOfComments = async id => {
-    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN comments WHERE posts.id = comments.postId && posts.id = ${id} GROUP BY posts.id`;
+const getNumberOfComments = async postId => {
+    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN comments WHERE posts.id = comments.postId && posts.id = ${postId} GROUP BY posts.id`;
 
     const [result] = await database.pool.query(query);
 
@@ -27,11 +26,16 @@ const getNumberOfComments = async id => {
 };
 
 const insertComment = async data => {
-    const newDate = new Date();
-    const postedDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
+    const insertQuery = SQL`INSERT INTO comments (text, postId, userId, created_date)
+    VALUES (${data.text}, ${data.postId}, ${data.id}, ${new Date()})`;
 
-    const query = SQL`INSERT INTO comments (text, postId, userId, created_date) VALUES (${data.text}, ${data.postId}, ${data.id}, ${postedDate})`;
-    const [result] = await database.pool.query(query);
+    const [result] = await database.pool.query(insertQuery);
+
+    const nOfComments = await getNumberOfComments(data.postId);
+
+    const updateCommentsQuery = SQL`UPDATE posts SET commented = ${nOfComments} WHERE id = ${data.postId}`;
+
+    await database.pool.query(updateCommentsQuery);
 
     const commentId = result.insertId;
 
