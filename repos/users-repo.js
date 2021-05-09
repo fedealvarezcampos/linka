@@ -98,6 +98,13 @@ const getRecentActivity = async id => {
     return comments;
 };
 
+const likesUserReceived = async userId => {
+    const query = SQL`SELECT count(likes.id) as totalLikes FROM likes INNER JOIN users ON likes.userId = users.id INNER JOIN posts ON posts.id = likes.postId WHERE posts.userId = ${userId}`;
+    const [result] = await database.pool.query(query);
+
+    return result[0].totalLikes;
+};
+
 module.exports = {
     getUserByName,
     getUserByEmail,
@@ -109,4 +116,5 @@ module.exports = {
     changePass,
     validateUser,
     getRecentActivity,
+    likesUserReceived,
 };

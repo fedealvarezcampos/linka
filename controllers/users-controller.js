@@ -21,6 +21,7 @@ async function getProfile(req, res, next) {
         }
 
         const posts = await postsRepository.getPostsByUserId(user.id);
+        const nOfLikes = await usersRepository.likesUserReceived(user.id);
 
         res.send({
             id: user.id,
@@ -30,7 +31,8 @@ async function getProfile(req, res, next) {
             userSite: user.userSite,
             userTW: user.userTW,
             userIG: user.userIG,
-            userdPosts: posts,
+            love: nOfLikes,
+            userPosts: posts,
         });
     } catch (err) {
         next(err);

@@ -111,9 +111,9 @@ async function likePost(req, res, next) {
             throw err;
         }
 
-        const result = await postsRepository.likePost({ userId, postId });
+        await postsRepository.likePost({ userId, postId });
 
-        return res.send(result);
+        return res.send();
     } catch (error) {
         next(error);
     }

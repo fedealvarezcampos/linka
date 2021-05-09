@@ -59,6 +59,13 @@ const isLikedByUserId = async (userId, postId) => {
     return result[0];
 };
 
+const getLikesFromPost = async postId => {
+    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN likes ON posts.id = likes.postId WHERE posts.id = ${postId}`;
+    const [result] = await database.pool.query(query);
+
+    return result.Total;
+};
+
 const deletePost = async id => {
     const query = SQL`DELETE FROM posts WHERE id = ${id}`;
 
@@ -72,6 +79,7 @@ module.exports = {
     deletePost,
     likePost,
     isLikedByUserId,
+    getLikesFromPost,
     getPostById,
     getPostsByUserId,
     sortPostsByDate,
