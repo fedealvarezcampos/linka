@@ -1,11 +1,18 @@
 const Joi = require('joi');
+const passComplex = require('joi-password-complexity');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { usersRepository, imagesRepository, postsRepository } = require('../repos');
-const { schemaUserProfile, schemaLogin, schemaPassChange, schemaRegister } = require('../helpers/joischema');
+const {
+    schemaUserProfile,
+    schemaLogin,
+    schemaPassChange,
+    schemaRegister,
+    complexOpt,
+} = require('../joischemas');
 
 async function getProfile(req, res, next) {
     try {
@@ -88,6 +95,8 @@ async function registerUser(req, res, next) {
             password,
             confirmPass,
         });
+
+        await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
 
         const userHasEmail = await usersRepository.getUserByEmail(email);
 
