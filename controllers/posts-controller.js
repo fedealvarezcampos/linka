@@ -44,10 +44,8 @@ async function createPost(req, res, next) {
     try {
         const { id } = req.auth;
 
-        //Saber que datos se están enviando en la petición
         const { link, title, description } = req.body;
 
-        //Validar que los datos que se envían son correctos
         const schema = Joi.object({
             link: Joi.string().uri().required(),
             title: Joi.string()
@@ -67,7 +65,6 @@ async function createPost(req, res, next) {
         });
         console.log(linkPreview);
 
-        //Meter los datos en la base de datos (usando una función externa)
         const result = await postsRepository.insertPost({
             link,
             userId: id,
@@ -79,19 +76,36 @@ async function createPost(req, res, next) {
             linkDesc: linkPreview.description,
         });
 
-        return res.send({
-            postId: result.id,
-            userId: result.userId,
+        return res.send(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function editPost(req, res, next) {
+    try {
+        const { id: postId } = req.params;
+
+        const { title, description } = req.body;
+
+        const schema = Joi.object({
+            title: Joi.string()
+                .max(255)
+                .error(() => new Error('Too long of a title. 255 chars max.')),
+            description: Joi.string()
+                .max(255)
+                .error(() => new Error('Too long of a description, max 255 characters.')),
+        });
+
+        await schema.validateAsync({ title, description });
+
+        const result = await postsRepository.editPost({
+            postId: postId,
             title,
             description,
-            link,
-            linkTitle: result.linkTitle,
-            linkImg: result.linkImg,
-            linkSite: result.linkSite,
-            linkDesc: result.linkDesc,
-            likes: result.likes,
-            created_date: result.created_date,
         });
+
+        return res.send(result);
     } catch (error) {
         next(error);
     }
@@ -130,6 +144,7 @@ async function deletePost(req, res, next) {
 
 module.exports = {
     createPost,
+    editPost,
     deletePost,
     getPost,
     likePost,

@@ -41,6 +41,17 @@ const insertPost = async data => {
     return getPostById(result.insertId);
 };
 
+const editPost = async data => {
+    const query = SQL`
+    UPDATE posts SET title = ${data.title}, description = ${data.description}, 
+    modDate = ${new Date()} WHERE id = ${data.postId};
+    `;
+
+    await database.pool.query(query);
+
+    return getPostById(data.postId);
+};
+
 const getLikesFromPost = async postId => {
     const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN likes ON posts.id = likes.postId WHERE posts.id = ${postId}`;
     const [result] = await database.pool.query(query);
@@ -99,6 +110,7 @@ module.exports = {
     deletePost,
     likePost,
     unLikePost,
+    editPost,
     isLikedByUserId,
     getLikesFromPost,
     updateLikesQuery,
