@@ -30,26 +30,53 @@ const sortPostsByLikes = async () => {
 };
 
 const insertPost = async data => {
-    //creo la query
     const query = SQL`
     INSERT INTO posts(userId, title, description, link, linkTitle, linkImg, linkSite, linkDesc, created_date)
     VALUES(${data.userId}, ${data.title}, ${data.description}, ${data.link}, 
-    ${data.linkTitle}, ${data.linkImg}, ${data.linkSite}, ${data.linkDesc}, ${new Date()});
-  `;
+    ${data.linkTitle}, ${data.linkImg}, ${data.linkSite}, ${data.linkDesc}, ${new Date()})
+    `;
 
-    //Ejecuto la query
     const [result] = await database.pool.query(query);
 
-    //Devuelvo información del resultado
     return getPostById(result.insertId);
 };
 
-const likePost = async data => {
+const getLikesFromPost = async postId => {
+    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN likes ON posts.id = likes.postId WHERE posts.id = ${postId}`;
+    const [result] = await database.pool.query(query);
+    const totalLikes = result[0].Total;
+
+    return totalLikes;
+};
+
+const updateLikesQuery = async postId => {
+    let totalLikes = await getLikesFromPost(postId);
+
+    const query = SQL`UPDATE posts SET likes = ${totalLikes}
+    WHERE id = ${postId}`;
+    await database.pool.query(query);
+
+    totalLikes = await getLikesFromPost(postId);
+
+    return totalLikes;
+};
+
+const likePost = async (userId, postId) => {
     const query = SQL`
     INSERT INTO likes(userId, postId, liked)
-    VALUES(${data.userId}, ${data.postId}, true);
-  `;
+    VALUES(${userId}, ${postId}, true)`;
+    const [result] = await database.pool.query(query);
+
+    await updateLikesQuery(postId);
+
+    return result;
+};
+
+const unLikePost = async (userId, postId) => {
+    const query = SQL`DELETE FROM likes WHERE userId = ${userId} && postId = ${postId}`;
     await database.pool.query(query);
+
+    await updateLikesQuery(postId);
 };
 
 const isLikedByUserId = async (userId, postId) => {
@@ -57,13 +84,6 @@ const isLikedByUserId = async (userId, postId) => {
     const [result] = await database.pool.query(query);
 
     return result[0];
-};
-
-const getLikesFromPost = async postId => {
-    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN likes ON posts.id = likes.postId WHERE posts.id = ${postId}`;
-    const [result] = await database.pool.query(query);
-
-    return result.Total;
 };
 
 const deletePost = async id => {
@@ -78,8 +98,10 @@ module.exports = {
     insertPost,
     deletePost,
     likePost,
+    unLikePost,
     isLikedByUserId,
     getLikesFromPost,
+    updateLikesQuery,
     getPostById,
     getPostsByUserId,
     sortPostsByDate,

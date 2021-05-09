@@ -105,13 +105,10 @@ async function likePost(req, res, next) {
         const isLikedAlready = await postsRepository.isLikedByUserId(userId, postId);
 
         if (isLikedAlready) {
-            const err = new Error(`Already liked.`);
-            err.code = 409;
-
-            throw err;
+            await postsRepository.unLikePost(userId, postId);
+        } else {
+            await postsRepository.likePost(userId, postId);
         }
-
-        await postsRepository.likePost({ userId, postId });
 
         return res.send();
     } catch (error) {

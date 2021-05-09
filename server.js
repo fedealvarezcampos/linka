@@ -57,6 +57,7 @@ app.get('/api/posts', postsController.sortPosts);
 app.get('/api/posts/:id', validateAuth, postsController.getPost);
 app.post('/api/posts', validateAuth, postsController.createPost);
 app.post('/api/posts/:id', validateAuth, postsController.likePost);
+app.put('/api/posts/:id', validateAuth, postsController.editPost);
 app.delete('/api/posts/delete/:id', validateAuth, postsController.deletePost);
 
 // * COMMENTS
