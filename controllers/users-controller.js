@@ -164,6 +164,8 @@ async function updateUser(req, res, next) {
             userIG,
         });
 
+        await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
+
         const user = await usersRepository.getUserByName(username);
 
         if (!user) {
@@ -216,6 +218,8 @@ async function changePass(req, res, next) {
             email,
         });
 
+        await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
+
         const user = await usersRepository.getUserByEmail(email);
 
         if (!user) {
@@ -243,6 +247,7 @@ async function changePass(req, res, next) {
             id: user.id,
             username: user.username,
             email,
+            message: 'Password has been successfully changed. You can now log in.',
         });
     } catch (err) {
         next(err);
@@ -277,9 +282,14 @@ async function deleteUser(req, res, next) {
 
         const deletedUser = await usersRepository.deleteUser(id);
 
+        if (deletedUser) {
+            const err = new Error('User account has already been erased.');
+            err.code = 409;
+            throw err;
+        }
+
         res.send({
             id: deletedUser.id,
-            username: deletedUser.username,
         });
     } catch (err) {
         next(err);
