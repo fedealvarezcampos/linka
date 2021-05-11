@@ -211,28 +211,23 @@ async function updateUser(req, res, next) {
 
 async function changePass(req, res, next) {
     try {
-        const { password, confirmPass, email } = req.body;
-
-        await schemaPassChange.validateAsync({
-            password,
-            confirmPass,
-            email,
-        });
+        const { UUID } = req.params;
+        const { password, confirmPass } = req.body;
 
         await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
 
-        const user = await usersRepository.getUserByEmail(email);
+        const user = await usersRepository.getUserByUUID(UUID);
 
         if (!user) {
             const err = new Error(`User does not exist.`);
-            err.code = 409;
+            err.code = 401;
 
             throw err;
         }
 
-        if (password !== confirmPass) {
-            const err = new Error('Password and confirmed password must be the same.');
-            err.code = 400;
+        if (user.verified === 0) {
+            const err = new Error(`User is not verified, confirm your account first.`);
+            err.code = 401;
 
             throw err;
         }
@@ -247,7 +242,6 @@ async function changePass(req, res, next) {
         res.send({
             id: user.id,
             username: user.username,
-            email,
             message: 'Password has been successfully changed. You can now log in.',
         });
     } catch (err) {
@@ -394,35 +388,6 @@ async function recoverPass(req, res, next) {
     }
 }
 
-async function recoverPassListener(req, res, next) {
-    try {
-        const { UUID } = req.params;
-
-        const user = await usersRepository.getUserByUUID(UUID);
-
-        if (!user) {
-            const err = new Error(`User does not exist.`);
-            err.code = 401;
-
-            throw err;
-        }
-
-        if (user.verified === 0) {
-            const err = new Error(`User is not verified, confirm your account first.`);
-            err.code = 401;
-
-            throw err;
-        }
-
-        res.send({
-            id: user.id,
-            username: user.username,
-        });
-    } catch (err) {
-        next(err);
-    }
-}
-
 async function validateUser(req, res, next) {
     try {
         const { UUID } = req.params;
@@ -515,6 +480,5 @@ module.exports = {
     validateUser,
     resendValidation,
     recoverPass,
-    recoverPassListener,
     getRecentActivity,
 };

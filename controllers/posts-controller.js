@@ -133,7 +133,7 @@ async function likePost(req, res, next) {
             await postsRepository.likePost(userId, postId);
         }
 
-        return res.send();
+        return res.send(userId);
     } catch (error) {
         next(error);
     }

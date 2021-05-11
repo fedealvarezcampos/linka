@@ -14,7 +14,7 @@ async function validateAuth(req, res, next) {
         const token = authorization.slice(7, authorization.length);
         const decodedToken = jwt.verify(token, process.env.SECRET);
 
-        const user = await usersRepository.getUserById(decodedToken.id);
+        const user = await usersRepository.getUserByName(decodedToken.username);
 
         if (!user) {
             const error = new Error('User does not exist.');
