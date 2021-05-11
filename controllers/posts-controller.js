@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { getLinkPreview } = require('link-preview-js');
 
-const { postsRepository } = require('../repos');
+const { postsRepository, usersRepository } = require('../repos');
 
 async function getPost(req, res, next) {
     try {
@@ -115,6 +115,15 @@ async function likePost(req, res, next) {
     try {
         const { id: userId } = req.auth;
         const { id: postId } = req.params;
+
+        const user = await usersRepository.getUserById(userId);
+
+        if (user.username === 'Account suspended.') {
+            const err = new Error(`Account no longer exists.`);
+            err.code = 401;
+
+            throw err;
+        }
 
         const isLikedAlready = await postsRepository.isLikedByUserId(userId, postId);
 

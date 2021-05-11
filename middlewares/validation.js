@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SQL = require('sql-template-strings');
-
-const { database } = require('../infrastructure');
+const { usersRepository } = require('../repos');
 
 async function validateAuth(req, res, next) {
     try {
@@ -16,13 +14,19 @@ async function validateAuth(req, res, next) {
         const token = authorization.slice(7, authorization.length);
         const decodedToken = jwt.verify(token, process.env.SECRET);
 
-        const query = SQL`SELECT * FROM users WHERE id = ${decodedToken.id}`;
-        const [users] = await database.pool.query(query);
+        const user = await usersRepository.getUserById(decodedToken.id);
 
-        if (!users || !users.length) {
+        if (!user) {
             const error = new Error('User does not exist.');
             error.code = 401;
             throw error;
+        }
+
+        if (user.verified === 0) {
+            const err = new Error(`User is not verified, either register or confirm your account.`);
+            err.code = 401;
+
+            throw err;
         }
 
         req.auth = decodedToken;
