@@ -36,12 +36,11 @@ const uploadAvatar = multer({
     },
 });
 
-// TODO Endpoints / Rutas
-
 // * USERS
 
 app.post('/api/users', usersController.registerUser);
 app.post('/api/users/login', usersController.loginUser);
+app.post('/api/users/resend', usersController.resendValidation);
 app.post('/api/users/recoverpass', usersController.recoverPass);
 app.post('/api/users/changepass', usersController.changePass);
 app.get('/api/users/:username', usersController.getProfile);

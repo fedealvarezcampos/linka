@@ -6,6 +6,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { usersRepository, imagesRepository, postsRepository } = require('../repos');
+
 const {
     schemaUserProfile,
     schemaLogin,
@@ -362,6 +363,13 @@ async function recoverPass(req, res, next) {
             throw err;
         }
 
+        if (user.verified === 0) {
+            const err = new Error(`User must be verified first.`);
+            err.code = 409;
+
+            throw err;
+        }
+
         const msg = {
             to: `${email}`,
             from: 'linka.noreply@gmail.com',
@@ -446,6 +454,57 @@ async function validateUser(req, res, next) {
     }
 }
 
+async function resendValidation(req, res, next) {
+    try {
+        const { email } = req.body;
+
+        const schema = Joi.string()
+            .email()
+            .required()
+            .error(() => new Error('Not a valid e-mail.'));
+
+        await schema.validateAsync(email);
+
+        const user = await usersRepository.getUserByEmail(email);
+
+        if (!user) {
+            const err = new Error(`No user has been found for that email address.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        if (user.verified === 1) {
+            const err = new Error(`User is already verified.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        const msg = {
+            to: `${user.email}`,
+            from: 'linka.noreply@gmail.com',
+            templateId: 'd-115445c28a684e788f3197a79251ec9d',
+            dynamicTemplateData: {
+                name: user.username,
+                header: req.headers.host,
+                uuid: user.UUID,
+            },
+        };
+
+        await sgMail.send(msg);
+
+        res.status(200);
+        res.send({
+            id: user.id,
+            name: user.username,
+            email: user.email,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     getProfile,
     registerUser,
@@ -454,6 +513,7 @@ module.exports = {
     deleteUser,
     changePass,
     validateUser,
+    resendValidation,
     recoverPass,
     recoverPassListener,
     getRecentActivity,
