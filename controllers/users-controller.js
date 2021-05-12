@@ -7,13 +7,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { usersRepository, imagesRepository, postsRepository } = require('../repos');
 
-const {
-    schemaUserProfile,
-    schemaLogin,
-    schemaPassChange,
-    schemaRegister,
-    complexOpt,
-} = require('../joischemas');
+const { schemaUserProfile, schemaLogin, schemaRegister, complexOpt } = require('../joischemas');
 
 async function getProfile(req, res, next) {
     try {
@@ -322,7 +316,7 @@ async function loginUser(req, res, next) {
             throw error;
         }
 
-        const tokenPayload = { id: user.id };
+        const tokenPayload = { id: user.id, username: user.username };
 
         const token = jwt.sign(tokenPayload, process.env.SECRET, {
             expiresIn: '5d',

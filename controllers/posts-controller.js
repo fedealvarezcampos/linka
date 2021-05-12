@@ -40,6 +40,25 @@ async function sortPosts(req, res, next) {
     }
 }
 
+async function searchPost(req, res, next) {
+    try {
+        const { value } = req.body;
+        const searchInput = '%' + value + '%';
+
+        if (!value) {
+            const err = new Error(`Need to submit a value to search for.`);
+            err.code = 401;
+
+            throw err;
+        }
+
+        const result = await postsRepository.searchPost(searchInput);
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function createPost(req, res, next) {
     try {
         const { id } = req.auth;
@@ -73,7 +92,7 @@ async function createPost(req, res, next) {
             linkTitle: linkPreview.title,
             linkImg: linkPreview.images[0],
             linkSite: linkPreview.siteName,
-            linkDesc: linkPreview.description,
+            linkDesc: linkPreview.description.slice(0, 120),
         });
 
         return res.send(result);
@@ -154,6 +173,7 @@ async function deletePost(req, res, next) {
 module.exports = {
     createPost,
     editPost,
+    searchPost,
     deletePost,
     getPost,
     likePost,

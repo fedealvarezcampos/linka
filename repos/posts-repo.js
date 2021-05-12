@@ -29,6 +29,15 @@ const sortPostsByLikes = async () => {
     return posts;
 };
 
+const searchPost = async value => {
+    const query = SQL`SELECT * FROM posts
+    WHERE title || linkDesc || linkTitle LIKE ${value}
+    ORDER BY created_date DESC`;
+    const [posts] = await database.pool.query(query);
+
+    return posts;
+};
+
 const insertPost = async data => {
     const query = SQL`
     INSERT INTO posts(userId, title, description, link, linkTitle, linkImg, linkSite, linkDesc, created_date)
@@ -109,6 +118,7 @@ module.exports = {
     insertPost,
     deletePost,
     likePost,
+    searchPost,
     unLikePost,
     editPost,
     isLikedByUserId,
