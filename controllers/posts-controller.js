@@ -92,7 +92,7 @@ async function createPost(req, res, next) {
             linkTitle: linkPreview.title,
             linkImg: linkPreview.images[0],
             linkSite: linkPreview.siteName,
-            linkDesc: linkPreview.description.slice(0, 120),
+            linkDesc: linkPreview.description.slice(0, 120) + '...',
         });
 
         return res.send(result);

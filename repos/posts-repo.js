@@ -31,8 +31,7 @@ const sortPostsByLikes = async () => {
 
 const searchPost = async value => {
     const query = SQL`SELECT * FROM posts
-    WHERE title || linkDesc || linkTitle LIKE ${value}
-    ORDER BY created_date DESC`;
+    WHERE MATCH(title, description, linkDesc, linkTitle) AGAINST(${value})`;
     const [posts] = await database.pool.query(query);
 
     return posts;

@@ -45,6 +45,9 @@ CREATE TABLE `posts` (
 );
 
 --@block
+ALTER TABLE posts ADD FULLTEXT(title, description, linkTitle, linkDesc);
+
+--@block
 
 CREATE TABLE `comments` (
   `id` int NOT NULL AUTO_INCREMENT,
