@@ -91,7 +91,7 @@ async function registerUser(req, res, next) {
             confirmPass,
         });
 
-        await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
+        await passComplex(complexOpt, 'Pass').validateAsync(password, confirmPass);
 
         const userHasEmail = await usersRepository.getUserByEmail(email);
 
