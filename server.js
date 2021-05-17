@@ -2,6 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 
@@ -14,6 +15,7 @@ const { PORT } = process.env;
 const staticPath = path.resolve(__dirname, 'static');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.static(staticPath));
 
