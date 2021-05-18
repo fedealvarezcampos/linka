@@ -11,7 +11,7 @@ async function getPost(req, res, next) {
 
         if (!post) {
             const err = new Error('Post does not exist.');
-            err.code = 409;
+            err.code = 404;
 
             throw err;
         }
@@ -113,6 +113,8 @@ async function editPost(req, res, next) {
     try {
         const { id: postId } = req.params;
 
+        const { id: userId } = req.auth;
+
         const { title, description } = req.body;
 
         const schema = Joi.object({
@@ -125,6 +127,22 @@ async function editPost(req, res, next) {
         });
 
         await schema.validateAsync({ title, description });
+
+        const post = await postsRepository.getPostById(postId);
+
+        if (!post) {
+            const err = new Error('Post does not exist.');
+            err.code = 404;
+
+            throw err;
+        }
+
+        if (userId !== post.userId) {
+            const err = new Error('Not your post.');
+            err.code = 409;
+
+            throw err;
+        }
 
         const result = await postsRepository.editPost({
             postId: postId,
@@ -144,10 +162,18 @@ async function likePost(req, res, next) {
         const { id: postId } = req.params;
 
         const user = await usersRepository.getUserById(userId);
+        const post = await postsRepository.getPostById(postId);
+
+        if (!post) {
+            const err = new Error(`No post there.`);
+            err.code = 404;
+
+            throw err;
+        }
 
         if (user.username === 'Account suspended.') {
             const err = new Error(`Account no longer exists.`);
-            err.code = 401;
+            err.code = 404;
 
             throw err;
         }
@@ -156,8 +182,10 @@ async function likePost(req, res, next) {
 
         if (isLikedAlready) {
             await postsRepository.unLikePost(userId, postId);
+            res.send(post);
         } else {
             await postsRepository.likePost(userId, postId);
+            res.send(post);
         }
     } catch (error) {
         next(error);
