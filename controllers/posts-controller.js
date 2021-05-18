@@ -10,7 +10,7 @@ async function getPost(req, res, next) {
         const post = await postsRepository.getPostById(id);
 
         if (!post) {
-            const err = new Error(`Post does not exist.`);
+            const err = new Error('Post does not exist.');
             err.code = 409;
 
             throw err;
@@ -159,8 +159,6 @@ async function likePost(req, res, next) {
         } else {
             await postsRepository.likePost(userId, postId);
         }
-
-        return res.send(userId);
     } catch (error) {
         next(error);
     }
@@ -170,9 +168,18 @@ async function deletePost(req, res, next) {
     try {
         const { id } = req.params;
 
-        const result = await postsRepository.deletePost(id);
+        const post = await postsRepository.getPostById(id);
 
-        return res.send(result);
+        if (!post) {
+            const err = new Error(`Post does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        await postsRepository.deletePost(id);
+
+        res.send();
     } catch (error) {
         next(error);
     }

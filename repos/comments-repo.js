@@ -9,7 +9,7 @@ const getCommentById = async id => {
 };
 
 const getComments = async postId => {
-    const query = SQL`SELECT * FROM comments WHERE postId = ${postId}`;
+    const query = SQL`SELECT * FROM comments WHERE postId = ${postId} ORDER BY id DESC`;
     const [comments] = await database.pool.query(query);
 
     return comments;

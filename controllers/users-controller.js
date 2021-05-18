@@ -269,6 +269,12 @@ async function deleteUser(req, res, next) {
             throw err;
         }
 
+        if (user.username === 'Account suspended.') {
+            const err = new Error('User account has already been erased.');
+            err.code = 409;
+            throw err;
+        }
+
         if (!userHasUsername) {
             const err = new Error(`Username does not exist.`);
             err.code = 409;
@@ -277,12 +283,6 @@ async function deleteUser(req, res, next) {
         }
 
         const deletedUser = await usersRepository.deleteUser(id);
-
-        if (deletedUser) {
-            const err = new Error('User account has already been erased.');
-            err.code = 409;
-            throw err;
-        }
 
         res.send({
             id: deletedUser.id,
