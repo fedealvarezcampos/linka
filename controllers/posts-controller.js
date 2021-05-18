@@ -42,8 +42,8 @@ async function sortPosts(req, res, next) {
 
 async function searchPost(req, res, next) {
     try {
-        const { sort } = req.query;
         const { value } = req.body;
+        const { sort } = req.query;
 
         if (!value) {
             const err = new Error(`Need to submit a value to search for.`);
@@ -51,15 +51,17 @@ async function searchPost(req, res, next) {
 
             throw err;
         }
-
-        const result = await postsRepository.searchPost(value);
+        if (!sort) {
+            const err = new Error(`Need to submit a value to search for.`);
+            err.code = 401;
+            const posts = await postsRepository.searchPost(value);
+            res.send(posts);
+        }
 
         if (sort === 'new') {
             const posts = await postsRepository.sortPostsByDate();
             res.send(posts);
         }
-
-        res.send(result);
     } catch (err) {
         next(err);
     }

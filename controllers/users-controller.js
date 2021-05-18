@@ -210,6 +210,13 @@ async function changePass(req, res, next) {
 
         await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
 
+        if (password !== confirmPass) {
+            const err = new Error('Password and confirmed password must be the same.');
+            err.code = 400;
+
+            throw err;
+        }
+
         const user = await usersRepository.getUserByUUID(UUID);
 
         if (!user) {
