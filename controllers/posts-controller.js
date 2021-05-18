@@ -194,12 +194,20 @@ async function likePost(req, res, next) {
 
 async function deletePost(req, res, next) {
     try {
+        const { id: userId } = req.auth;
         const { id } = req.params;
 
         const post = await postsRepository.getPostById(id);
 
         if (!post) {
             const err = new Error(`Post does not exist.`);
+            err.code = 404;
+
+            throw err;
+        }
+
+        if (post.userId !== userId) {
+            const err = new Error(`This post is not yours so you can't delete it, sorry.`);
             err.code = 409;
 
             throw err;
@@ -207,7 +215,7 @@ async function deletePost(req, res, next) {
 
         await postsRepository.deletePost(id);
 
-        res.send();
+        res.send({ message: 'All gone!' });
     } catch (error) {
         next(error);
     }

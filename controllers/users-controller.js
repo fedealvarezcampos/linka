@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+const { uploadImages } = require('../helpers');
+
 const { usersRepository, imagesRepository, postsRepository } = require('../repos');
 
 const { schemaUserProfile, schemaLogin, schemaRegister, complexOpt } = require('../joischemas');
@@ -146,7 +148,6 @@ async function registerUser(req, res, next) {
 async function updateUser(req, res, next) {
     try {
         const { id } = req.auth;
-        const { file } = req;
         const { username } = req.params;
         const { password, confirmPass, bio, userSite, userTW, userIG } = req.body;
 
@@ -187,8 +188,13 @@ async function updateUser(req, res, next) {
             userIG,
         });
 
-        const url = `${req.headers.host}/images/${id}/${file.filename}`;
-        const image = await imagesRepository.updateAvatar(id, url);
+        let image;
+
+        if (req.files && req.files.avatar) {
+            image = await uploadImages({ file: req.files.avatar, dir: 'avatars' });
+            await imagesRepository.updateAvatar(id, image);
+            // delete image si ya existe
+        }
 
         res.send({
             username,
@@ -196,7 +202,7 @@ async function updateUser(req, res, next) {
             userSite,
             userTW,
             userIG,
-            avatar: image,
+            avatar: image || user.avatar,
         });
     } catch (err) {
         next(err);
@@ -260,10 +266,17 @@ async function deleteUser(req, res, next) {
         await schema.validateAsync(id);
 
         const user = await usersRepository.getUserById(id);
-        const userHasUsername = await usersRepository.getUserByName(username);
+        const userByName = await usersRepository.getUserByName(username);
 
         if (!user) {
             const err = new Error(`User does not exist.`);
+            err.code = 409;
+
+            throw err;
+        }
+
+        if (id !== userByName.id) {
+            const err = new Error(`This is not you, can't erase someone else in this place.`);
             err.code = 409;
 
             throw err;
@@ -275,7 +288,7 @@ async function deleteUser(req, res, next) {
             throw err;
         }
 
-        if (!userHasUsername) {
+        if (!userByName) {
             const err = new Error(`Username does not exist.`);
             err.code = 409;
 

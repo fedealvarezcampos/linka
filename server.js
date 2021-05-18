@@ -1,10 +1,11 @@
 require('dotenv').config();
 const path = require('path');
-const fs = require('fs');
+// const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
-const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
+// const multer = require('multer');
+// const { v4: uuidv4 } = require('uuid');
+const fileupload = require("express-fileupload");
 
 const { usersController, commentsController, postsController } = require('./controllers');
 
@@ -19,24 +20,26 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(staticPath));
 
-const uploadAvatar = multer({
-    storage: multer.diskStorage({
-        destination: function (req, file, cb) {
-            const { id } = req.auth;
-            const folder = path.join(__dirname, `static/images/${id}/`);
+app.use(fileupload());
 
-            fs.mkdirSync(folder, { recursive: true });
+// const uploadAvatar = multer({
+//     storage: multer.diskStorage({
+//         destination: function (req, file, cb) {
+//             const { id } = req.auth;
+//             const folder = path.join(__dirname, `static/images/${id}/`);
 
-            cb(null, folder);
-        },
-        filename: function (req, file, cb) {
-            cb(null, uuidv4() + path.extname(file.originalname));
-        },
-    }),
-    limits: {
-        fileSize: 1024 * 1024, // 1 MB
-    },
-});
+//             fs.mkdirSync(folder, { recursive: true });
+
+//             cb(null, folder);
+//         },
+//         filename: function (req, file, cb) {
+//             cb(null, uuidv4() + path.extname(file.originalname));
+//         },
+//     }),
+//     limits: {
+//         fileSize: 1024 * 1024, // 1 MB
+//     },
+// });
 
 // * USERS
 
@@ -48,7 +51,8 @@ app.post('/api/users/changepass/:UUID', usersController.changePass);
 app.get('/api/users/:username', usersController.getProfile);
 app.get('/api/users/validate/:UUID', usersController.validateUser);
 app.get('/api/users/:username/activity', validateAuth, usersController.getRecentActivity);
-app.put('/api/users/:username', validateAuth, uploadAvatar.single('avatar'), usersController.updateUser);
+// app.put('/api/users/:username', validateAuth, uploadAvatar.single('avatar'), usersController.updateUser);
+app.put('/api/users/:username', validateAuth, usersController.updateUser);
 app.delete('/api/users/:username', validateAuth, usersController.deleteUser);
 
 // * POSTS
