@@ -2,7 +2,7 @@ const Joi = require('joi');
 const complexOpt = {
     min: 10,
     max: 20,
-    lowerCase: 1,
+    lowerCase: 0,
     upperCase: 1,
     numeric: 2,
     symbol: 0,

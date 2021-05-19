@@ -16,14 +16,26 @@ const getPostsByUserId = async userId => {
 };
 
 const sortPostsByDate = async () => {
-    const query = SQL`SELECT * FROM posts ORDER BY created_date DESC`;
+    const query = SQL`SELECT posts.id AS "postId",
+    userId, title, description, link, linkTitle,
+    linkImg, linkSite, linkDesc, likes, commented,
+    created_date, modDate, username, avatar
+    FROM posts INNER JOIN users
+    ON posts.userId = users.id
+    ORDER BY created_date DESC`;
     const [posts] = await database.pool.query(query);
 
     return posts;
 };
 
 const sortPostsByLikes = async () => {
-    const query = SQL`SELECT * FROM posts ORDER BY likes DESC`;
+    const query = SQL`SELECT posts.id AS "postId",
+    userId, title, description, link, linkTitle,
+    linkImg, linkSite, linkDesc, likes, commented,
+    created_date, modDate, username, avatar
+    FROM posts INNER JOIN users
+    ON posts.userId = users.id
+    ORDER BY likes DESC`;
     const [posts] = await database.pool.query(query);
 
     return posts;
