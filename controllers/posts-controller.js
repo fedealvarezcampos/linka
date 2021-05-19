@@ -1,6 +1,7 @@
 const Joi = require('joi');
+const { v4: uuidv4 } = require('uuid');
+const download = require('image-downloader');
 const { getLinkPreview } = require('link-preview-js');
-
 const { postsRepository, usersRepository } = require('../repos');
 
 async function getPost(req, res, next) {
@@ -76,11 +77,11 @@ async function createPost(req, res, next) {
         const schema = Joi.object({
             link: Joi.string().uri().required(),
             title: Joi.string()
-                .max(255)
-                .error(() => new Error('Too long of a title. 255 chars max.')),
+                .max(120)
+                .error(() => new Error('Too long of a title. 120 chars max.')),
             description: Joi.string()
-                .max(255)
-                .error(() => new Error('Too long of a description, max 255 characters.')),
+                .max(240)
+                .error(() => new Error('Too long of a description, max 240 characters.')),
         });
 
         await schema.validateAsync({ link, title, description });
@@ -92,15 +93,29 @@ async function createPost(req, res, next) {
         });
         console.log(linkPreview);
 
+        let image;
+
+        if (link.includes('instagram.com')) {
+            // image = await uploadImages({ file: linkPreview.favicons[0], dir: 'missedPrevs' });
+
+            const options = {
+                url: linkPreview.images[0],
+                dest: `./static/images/missedPrevs/${uuidv4()}.jpg`, // will be saved to /path/to/dest/photo.jpg
+            };
+
+            image = await download.image(options);
+        }
+
         const result = await postsRepository.insertPost({
             link,
             userId: id,
             title,
             description,
-            linkTitle: linkPreview.title,
-            linkImg: linkPreview.images[0],
+            linkTitle: linkPreview.title.slice(0, 45) + '...',
+            linkImg: image || linkPreview.images[0],
             linkSite: linkPreview.siteName,
-            linkDesc: linkPreview.description.slice(0, 120) + '...',
+            linkDesc:
+                linkPreview.description.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').slice(0, 120) + '...',
         });
 
         return res.send(result);
