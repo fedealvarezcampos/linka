@@ -1,6 +1,6 @@
 const Joi = require('joi');
-const { v4: uuidv4 } = require('uuid');
-const download = require('image-downloader');
+// const { v4: uuidv4 } = require('uuid');
+// const download = require('image-downloader');
 const { getLinkPreview } = require('link-preview-js');
 const { postsRepository, usersRepository } = require('../repos');
 
@@ -43,26 +43,18 @@ async function sortPosts(req, res, next) {
 
 async function searchPost(req, res, next) {
     try {
-        const { value } = req.body;
-        const { sort } = req.query;
+        const { q, sort } = req.query;
+        console.log(sort);
 
-        if (!value) {
+        if (!q) {
             const err = new Error(`Need to submit a value to search for.`);
             err.code = 401;
 
             throw err;
         }
-        if (!sort) {
-            const err = new Error(`Need to submit a value to search for.`);
-            err.code = 401;
-            const posts = await postsRepository.searchPost(value);
-            res.send(posts);
-        }
 
-        if (sort === 'new') {
-            const posts = await postsRepository.sortPostsByDate();
-            res.send(posts);
-        }
+        const posts = await postsRepository.searchPost(q, sort);
+        res.send(posts);
     } catch (err) {
         next(err);
     }
@@ -93,18 +85,18 @@ async function createPost(req, res, next) {
         });
         console.log(linkPreview);
 
-        let image;
+        // let image;
 
-        if (link.includes('instagram.com')) {
-            // image = await uploadImages({ file: linkPreview.favicons[0], dir: 'missedPrevs' });
+        // if (link.includes('instagram.com')) {
+        //     // image = await uploadImages({ file: linkPreview.favicons[0], dir: 'missedPrevs' });
 
-            const options = {
-                url: linkPreview.images[0],
-                dest: `./static/images/missedPrevs/${uuidv4()}.jpg`, // will be saved to /path/to/dest/photo.jpg
-            };
+        //     const options = {
+        //         url: linkPreview.images[0],
+        //         dest: `./static/images/missedPrevs/${uuidv4()}.jpg`, // will be saved to /path/to/dest/photo.jpg
+        //     };
 
-            image = await download.image(options);
-        }
+        //     image = await download.image(options);
+        // }
 
         const result = await postsRepository.insertPost({
             link,
@@ -112,7 +104,7 @@ async function createPost(req, res, next) {
             title,
             description,
             linkTitle: linkPreview.title.slice(0, 45) + '...',
-            linkImg: image || linkPreview.images[0],
+            linkImg: linkPreview.images[0],
             linkSite: linkPreview.siteName,
             linkDesc:
                 linkPreview.description.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').slice(0, 120) + '...',

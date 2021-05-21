@@ -13,6 +13,7 @@ const { PORT } = process.env;
 const staticPath = path.resolve(__dirname, 'static');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static(staticPath));
@@ -36,7 +37,7 @@ app.delete('/api/users/:username', validateAuth, usersController.deleteUser);
 
 app.get('/api/posts', postsController.sortPosts);
 app.get('/api/posts/:id', validateAuth, postsController.getPost);
-app.post('/api/posts/search', validateAuth, postsController.searchPost);
+app.get('/api/search', validateAuth, postsController.searchPost);
 app.post('/api/posts', validateAuth, postsController.createPost);
 app.post('/api/posts/:id', validateAuth, postsController.likePost);
 app.put('/api/posts/:id', validateAuth, postsController.editPost);

@@ -33,7 +33,6 @@ CREATE TABLE `posts` (
   `linkImg` varchar(512) DEFAULT NULL,
   `linkSite` varchar(255) DEFAULT NULL,
   `linkDesc` varchar(255) DEFAULT NULL,
-  `views` int DEFAULT NULL,
   `likes` int DEFAULT NULL,
   `commented` int DEFAULT NULL,
   `created_date` DATETIME,
@@ -45,7 +44,10 @@ CREATE TABLE `posts` (
 );
 
 --@block
-ALTER TABLE posts ADD FULLTEXT(title, description, linkTitle, linkDesc);
+
+-- ALTER TABLE posts ADD FULLTEXT(title, description, linkTitle, linkDesc);
+
+CREATE FULLTEXT INDEX seachIndex ON posts(title, description, linkTitle, linkDesc);
 
 --@block
 
