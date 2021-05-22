@@ -19,7 +19,14 @@ async function getProfile(req, res, next) {
 
         if (!user) {
             const err = new Error(`User does not exist.`);
-            err.code = 409;
+            err.code = 404;
+
+            throw err;
+        }
+
+        if (user.verified === 0) {
+            const err = new Error(`User profile not available (possibly not verified).`);
+            err.code = 404;
 
             throw err;
         }
