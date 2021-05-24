@@ -47,7 +47,7 @@ CREATE TABLE `posts` (
 
 -- ALTER TABLE posts ADD FULLTEXT(title, description, linkTitle, linkDesc);
 
-CREATE FULLTEXT INDEX seachIndex ON posts(title, description, linkTitle, linkDesc);
+CREATE FULLTEXT INDEX searchIndex ON posts(title, description, link, linkTitle, linkDesc);
 
 --@block
 

@@ -17,7 +17,7 @@ const uploadImages = async ({ file, dir }) => {
         image.resize(500);
     }
 
-    const imageName = `${UUID.v4()}.jpg`;
+    const imageName = `AV${UUID.v4()}.jpg`;
 
     await image.toFile(path.join(targetDir, imageName));
 

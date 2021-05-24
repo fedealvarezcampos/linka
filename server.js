@@ -3,10 +3,9 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const fileupload = require('express-fileupload');
+const { validateAuth } = require('./middlewares');
 
 const { usersController, commentsController, postsController } = require('./controllers');
-
-const { validateAuth } = require('./middlewares');
 
 const { PORT } = process.env;
 
@@ -16,9 +15,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(staticPath));
-
 app.use(fileupload());
+
+app.use('/', express.static(staticPath));
 
 // * USERS
 

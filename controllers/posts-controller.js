@@ -44,7 +44,6 @@ async function sortPosts(req, res, next) {
 async function searchPost(req, res, next) {
     try {
         const { q, sort } = req.query;
-        console.log(sort);
 
         if (!q) {
             const err = new Error(`Need to submit a value to search for.`);
@@ -52,6 +51,12 @@ async function searchPost(req, res, next) {
 
             throw err;
         }
+
+        const schema = Joi.string()
+            .min(4)
+            .error(() => new Error('Search should be at least 4 characters long.'));
+
+        await schema.validateAsync(q);
 
         const posts = await postsRepository.searchPost(q, sort);
         res.send(posts);

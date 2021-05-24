@@ -349,8 +349,17 @@ async function loginUser(req, res, next) {
             expiresIn: '5d',
         });
 
+        const nOfLikes = await usersRepository.likesUserReceived(user.id);
+
         res.send({
             id: user.id,
+            username: user.username,
+            bio: user.bio,
+            love: nOfLikes,
+            avatar: user.avatar,
+            userSite: user.userSite,
+            userTW: user.userTW,
+            userIG: user.userIG,
             token,
         });
     } catch (err) {
