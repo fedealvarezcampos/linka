@@ -15,20 +15,24 @@ const schemaUserProfile = Joi.object({
     password: Joi.string().error(() => new Error('Password must be 5 to 20 characters long.')),
     confirmPass: Joi.string().error(() => new Error('Password must be 5 to 20 characters long.')),
     bio: Joi.string()
+        .allow('')
         .min(5)
         .max(100)
         .error(() => new Error('Bio must be between 5 and 100 characters long.')),
     userSite: Joi.string()
+        .allow('')
         .min(5)
         .max(50)
         .uri()
         .error(() => new Error('Must be a valid URL.')),
     userTW: Joi.string()
+        .allow('')
         .min(5)
         .max(50)
         .uri()
         .error(() => new Error('Must be a valid URL.')),
     userIG: Joi.string()
+        .allow('')
         .min(5)
         .max(50)
         .uri()

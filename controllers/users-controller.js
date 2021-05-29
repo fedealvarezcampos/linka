@@ -155,6 +155,7 @@ async function registerUser(req, res, next) {
 async function updateUser(req, res, next) {
     try {
         const { id } = req.auth;
+        const token = req.headers.authorization.slice(7);
         const { username } = req.params;
         const { password, confirmPass, bio, userSite, userTW, userIG } = req.body;
 
@@ -203,13 +204,18 @@ async function updateUser(req, res, next) {
             // delete image si ya existe
         }
 
+        const nOfLikes = await usersRepository.likesUserReceived(user.id);
+
         res.send({
+            id,
             username,
             bio,
+            love: nOfLikes,
+            avatar: image || user.avatar,
             userSite,
             userTW,
             userIG,
-            avatar: image || user.avatar,
+            token: token,
         });
     } catch (err) {
         next(err);
