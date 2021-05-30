@@ -72,13 +72,18 @@ async function createPost(req, res, next) {
         const { link, title, description } = req.body;
 
         const schema = Joi.object({
-            link: Joi.string().uri().required(),
+            link: Joi.string()
+                .uri()
+                .required()
+                .error(() => new Error('You have to enter a valid link.')),
             title: Joi.string()
+                .min(6)
                 .max(120)
-                .error(() => new Error('Too long of a title. 120 chars max.')),
+                .error(() => new Error('Title must be 6 to 120 characters long.')),
             description: Joi.string()
+                .min(10)
                 .max(240)
-                .error(() => new Error('Too long of a description, max 240 characters.')),
+                .error(() => new Error('Description must be 10 to 240 characters long.')),
         });
 
         await schema.validateAsync({ link, title, description });
