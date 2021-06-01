@@ -31,7 +31,7 @@ async function postComment(req, res, next) {
         const { id: postId } = req.params;
         const { id } = req.auth;
 
-        const schema = Joi.string().min(5).max(500).required();
+        const schema = Joi.string().min(5).max(500);
         await schema.validateAsync(text);
 
         const user = await usersRepository.getUserById(id);
@@ -57,7 +57,15 @@ async function postComment(req, res, next) {
             postId,
         });
 
-        res.send(comment);
+        res.send({
+            commentId: comment.id,
+            userId: comment.userId,
+            postId: comment.postId,
+            text: comment.text,
+            created_date: comment.created_date,
+            username: user.username,
+            avatar: user.avatar,
+        });
     } catch (err) {
         next(err);
     }
