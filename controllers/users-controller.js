@@ -18,7 +18,7 @@ async function getProfile(req, res, next) {
         const user = await usersRepository.getUserByName(username);
 
         if (!user) {
-            const err = new Error(`User does not exist.`);
+            const err = new Error(`Account does not exist.`);
             err.code = 404;
 
             throw err;
@@ -327,7 +327,7 @@ async function loginUser(req, res, next) {
         const user = await usersRepository.getUserByEmail(email);
 
         if (!user) {
-            const error = new Error(`User doesn't exist.`);
+            const error = new Error(`Account does not exist.`);
             error.code = 401;
 
             throw error;

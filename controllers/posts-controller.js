@@ -17,7 +17,24 @@ async function getPost(req, res, next) {
             throw err;
         }
 
-        res.send(post);
+        const user = await usersRepository.getUserById(post.userId);
+
+        res.send({
+            id: post.id,
+            userId: post.userId,
+            username: user.username,
+            title: post.title,
+            description: post.description,
+            link: post.link,
+            linkTitle: post.linkTitle,
+            linkImg: post.linkImg,
+            linkSite: post.linkSite,
+            linkDesc: post.linkDesc,
+            likes: post.likes,
+            commented: post.commented,
+            created_date: post.created_date,
+            modDate: post.modDate,
+        });
     } catch (err) {
         next(err);
     }

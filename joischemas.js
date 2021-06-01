@@ -43,8 +43,8 @@ const schemaLogin = Joi.object({
     email: Joi.string()
         .email()
         .required()
-        .error(() => new Error('Not a valid e-mail.')),
-    password: Joi.string().error(() => new Error('Password must be 5 to 20 characters long.')),
+        .error(() => new Error('A valid email is required.')),
+    password: Joi.string().error(() => new Error('Password is required.')),
 });
 
 const schemaPassChange = Joi.object({
