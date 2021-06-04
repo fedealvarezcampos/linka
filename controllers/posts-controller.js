@@ -216,10 +216,10 @@ async function likePost(req, res, next) {
 
         if (isLikedAlready) {
             await postsRepository.unLikePost(userId, postId);
-            res.send(post);
+            res.send({ post, likeId: (isLikedAlready && isLikedAlready.id) || null });
         } else {
             await postsRepository.likePost(userId, postId);
-            res.send(post);
+            res.send({ post, likeId: (isLikedAlready && isLikedAlready.id) || null });
         }
     } catch (error) {
         next(error);
