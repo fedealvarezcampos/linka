@@ -43,15 +43,25 @@ async function getPost(req, res, next) {
 async function sortPosts(req, res, next) {
     try {
         const { sort } = req.query;
+        const { page } = req.query;
+        const { limit } = req.query;
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
 
         if (!sort) {
             const posts = await postsRepository.sortPostsByDate();
-            res.send(posts);
+            res.send(page ? posts.slice(startIndex, endIndex) : posts);
+        }
+
+        if (sort === 'discussed') {
+            const posts = await postsRepository.sortPostsByComments();
+            res.send(page ? posts.slice(startIndex, endIndex) : posts);
         }
 
         if (sort === 'mostliked') {
             const posts = await postsRepository.sortPostsByLikes();
-            res.send(posts);
+            res.send(page ? posts.slice(startIndex, endIndex) : posts);
         }
     } catch (err) {
         next(err);

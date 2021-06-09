@@ -41,6 +41,19 @@ const sortPostsByLikes = async () => {
     return posts;
 };
 
+const sortPostsByComments = async () => {
+    const query = SQL`SELECT posts.id AS "postId",
+    userId, title, description, link, linkTitle,
+    linkImg, linkSite, linkDesc, likes, commented,
+    created_date, modDate, username, avatar
+    FROM posts INNER JOIN users
+    ON posts.userId = users.id
+    ORDER BY commented DESC`;
+    const [posts] = await database.pool.query(query);
+
+    return posts;
+};
+
 const searchPost = async (value, sort) => {
     const query = SQL`SELECT * FROM posts
     WHERE MATCH(title, description, link, linkTitle, linkDesc) AGAINST(${value})`;
@@ -141,4 +154,5 @@ module.exports = {
     getPostsByUserId,
     sortPostsByDate,
     sortPostsByLikes,
+    sortPostsByComments,
 };
