@@ -47,7 +47,17 @@ async function updateUser(username, data) {
     const newDate = new Date();
     const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
 
-    const updateQuery = SQL`UPDATE users SET password = ${password}, bio = ${bio}, userSite = ${userSite}, userTW = ${userTW}, userIG = ${userIG}, editDate = ${editDate} WHERE username = ${username}`;
+    const updateQuery = password
+        ? SQL`UPDATE users SET password = ${password},
+        bio = ${bio}, userSite = ${userSite},
+        userTW = ${userTW}, userIG = ${userIG},
+        editDate = ${editDate}
+        WHERE username = ${username}`
+        : SQL`UPDATE users SET bio = ${bio},
+        userSite = ${userSite}, userTW = ${userTW},
+        userIG = ${userIG}, editDate = ${editDate}
+        WHERE username = ${username}`;
+
     await database.pool.query(updateQuery);
 
     return getUserByName(username);

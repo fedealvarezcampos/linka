@@ -12,8 +12,12 @@ const complexOpt = {
 const usernameRegex = /^[A-Za-z][A-Za-z0-9]*$/;
 
 const schemaUserProfile = Joi.object({
-    password: Joi.string().error(() => new Error('Password must be 5 to 20 characters long.')),
-    confirmPass: Joi.string().error(() => new Error('Password must be 5 to 20 characters long.')),
+    password: Joi.string()
+        .optional()
+        .error(() => new Error('Password must be 10 to 20 characters long.')),
+    confirmPass: Joi.string()
+        .optional()
+        .error(() => new Error('Password must be 10 to 20 characters long.')),
     bio: Joi.string()
         .allow('')
         .min(5)

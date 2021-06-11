@@ -159,16 +159,27 @@ async function updateUser(req, res, next) {
         const { username } = req.params;
         const { password, confirmPass, bio, userSite, userTW, userIG } = req.body;
 
-        await schemaUserProfile.validateAsync({
-            password,
-            confirmPass,
-            bio,
-            userSite,
-            userTW,
-            userIG,
-        });
+        if (password && confirmPass) {
+            await schemaUserProfile.validateAsync({
+                password,
+                confirmPass,
+                bio,
+                userSite,
+                userTW,
+                userIG,
+            });
+        } else {
+            await schemaUserProfile.validateAsync({
+                bio,
+                userSite,
+                userTW,
+                userIG,
+            });
+        }
 
-        await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass);
+        password &&
+            confirmPass &&
+            (await passComplex(complexOpt, 'Password').validateAsync(password, confirmPass));
 
         const user = await usersRepository.getUserByName(username);
 
@@ -186,7 +197,7 @@ async function updateUser(req, res, next) {
             throw err;
         }
 
-        const passwordHash = await bcrypt.hash(password, 10);
+        const passwordHash = password && confirmPass && (await bcrypt.hash(password, 10));
 
         await usersRepository.updateUser(username, {
             password: passwordHash,
