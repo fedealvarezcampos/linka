@@ -140,11 +140,14 @@ async function createPost(req, res, next) {
             userId: id,
             title,
             description,
-            linkTitle: linkPreview.title.slice(0, 45) + '...',
+            linkTitle:
+                (linkPreview.title.includes('Cloudflare') && 'Check the link!') ||
+                linkPreview.title.slice(0, 45) + '...',
             linkImg: linkPreview.images[0],
             linkSite: linkPreview.siteName,
-            linkDesc:
-                linkPreview.description.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').slice(0, 120) + '...',
+            linkDesc: linkPreview.description
+                ? linkPreview?.description.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').slice(0, 120) + `...`
+                : `This site doesn't like previews, check the link!`,
         });
 
         return res.send(result);
