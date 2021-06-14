@@ -84,6 +84,7 @@ async function searchPost(req, res, next) {
             .error(() => new Error('Search should be at least 4 characters long.'));
 
         await schema.validateAsync(q);
+        console.log(q);
 
         const posts = await postsRepository.searchPost(q, sort);
         res.send(posts);

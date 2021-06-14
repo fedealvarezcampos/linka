@@ -55,10 +55,18 @@ const sortPostsByComments = async () => {
 };
 
 const searchPost = async (value, sort) => {
-    const query = SQL`SELECT * FROM posts
+    const query = SQL`SELECT posts.*, users.username
+    FROM posts INNER JOIN users
+    ON posts.userId = users.id
     WHERE MATCH(title, description, link, linkTitle, linkDesc) AGAINST(${value})`;
-    if (sort === 'new') {
+    if (sort === '') {
         query.append(SQL` ORDER BY created_date DESC`);
+    }
+    if (sort === 'mostliked') {
+        query.append(SQL` ORDER BY likes DESC`);
+    }
+    if (sort === 'discussed') {
+        query.append(SQL` ORDER BY commented DESC`);
     }
     const [posts] = await database.pool.query(query);
     return posts;
