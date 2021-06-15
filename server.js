@@ -46,6 +46,7 @@ app.delete('/api/posts/delete/:id', validateAuth, postsController.deletePost);
 
 app.get('/api/posts/:id/comments', commentsController.getComments);
 app.post('/api/posts/:id/comments', validateAuth, commentsController.postComment);
+app.post('/api/posts/:id/comments/:id_comment', validateAuth, commentsController.replyToComment);
 app.delete('/api/posts/:id/comments/:id_comment', validateAuth, commentsController.eraseComment);
 
 // prettier-ignore

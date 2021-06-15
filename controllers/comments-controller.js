@@ -71,6 +71,62 @@ async function postComment(req, res, next) {
     }
 }
 
+async function replyToComment(req, res, next) {
+    try {
+        const { text } = req.body;
+        const { id: postId, id_comment: parentId } = req.params;
+        const { id } = req.auth;
+
+        const schema = Joi.string().min(5).max(500);
+        await schema.validateAsync(text);
+
+        const user = await usersRepository.getUserById(id);
+        const post = await postsRepository.getPostById(postId);
+        const comment = await commentsRepository.getCommentById(parentId);
+
+        if (!user) {
+            const error = new Error(`User doesn't exist.`);
+            error.code = 404;
+
+            throw error;
+        }
+
+        if (!comment) {
+            const error = new Error(`No such comment.`);
+            error.code = 404;
+
+            throw error;
+        }
+
+        if (!post) {
+            const error = new Error(`No post there.`);
+            error.code = 404;
+
+            throw error;
+        }
+
+        const commentReply = await commentsRepository.respondComment({
+            text,
+            id,
+            postId,
+            parentId,
+        });
+
+        res.send({
+            commentId: commentReply.id,
+            userId: commentReply.userId,
+            postId: commentReply.postId,
+            text: commentReply.text,
+            parent_comment: commentReply.parent_comment,
+            created_date: commentReply.created_date,
+            username: user.username,
+            avatar: user.avatar,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function eraseComment(req, res, next) {
     try {
         const { id: postId, id_comment: commentId } = req.params;
@@ -129,5 +185,6 @@ async function eraseComment(req, res, next) {
 module.exports = {
     getComments,
     postComment,
+    replyToComment,
     eraseComment,
 };

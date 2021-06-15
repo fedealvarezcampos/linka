@@ -10,7 +10,7 @@ const getCommentById = async id => {
 
 const getComments = async postId => {
     const query = SQL`SELECT comments.id AS "commentId",
-    userId, postId, text, created_date, username, avatar
+    userId, postId, parent_comment AS parentId, text, created_date, username, avatar
     FROM comments INNER JOIN users
     ON comments.userId = users.id
     WHERE postId = ${postId}
@@ -47,6 +47,23 @@ const insertComment = async data => {
     return getCommentById(commentId);
 };
 
+const respondComment = async data => {
+    const insertQuery = SQL`INSERT INTO comments (text, postId, userId, parent_comment, created_date)
+    VALUES (${data.text}, ${data.postId}, ${data.id}, ${data.parentId}, ${new Date()})`;
+
+    const [result] = await database.pool.query(insertQuery);
+
+    const nOfComments = await getNumberOfComments(data.postId);
+
+    const updateCommentsQuery = SQL`UPDATE posts SET commented = ${nOfComments} WHERE id = ${data.postId}`;
+
+    await database.pool.query(updateCommentsQuery);
+
+    const commentId = result.insertId;
+
+    return getCommentById(commentId);
+};
+
 const eraseComment = async commentId => {
     const erasedCommentText = 'Comment deleted.';
     const updateQuery = SQL`UPDATE comments SET text = ${erasedCommentText} WHERE id = ${commentId}`;
@@ -59,6 +76,7 @@ module.exports = {
     getComments,
     getCommentById,
     insertComment,
+    respondComment,
     eraseComment,
     getNumberOfComments,
 };

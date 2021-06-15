@@ -56,6 +56,7 @@ CREATE TABLE `comments` (
   `userId` int NOT NULL,
   `postId` int NOT NULL,
   `text` varchar(511) NOT NULL,
+  `parent_comment` int DEFAULT NULL,
   `created_date` DATETIME,
   PRIMARY KEY (`id`),
   FOREIGN KEY (userId)
