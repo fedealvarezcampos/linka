@@ -97,6 +97,7 @@ const getRecentActivity = async id => {
     const query = SQL`SELECT users.avatar AS "avatar",
         users.username AS "username",
         posts.title AS "postTitle",
+        posts.id AS "postId",
         comments.text AS "comment",
         comments.created_date AS "commentDate"
         FROM comments INNER JOIN posts ON postId = posts.id
