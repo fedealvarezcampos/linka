@@ -19,6 +19,7 @@ async function getComments(req, res, next) {
 
         const comments = await commentsRepository.getComments(postId);
 
+        // res.send(commentReplies);
         res.send(comments);
     } catch (err) {
         next(err);

@@ -20,6 +20,18 @@ const getComments = async postId => {
     return comments;
 };
 
+const getCommentReplies = async parentId => {
+    const query = SQL`SELECT comments.id AS "commentId",
+    userId, postId, parent_comment AS parentId, text, created_date, username, avatar
+    FROM comments INNER JOIN users
+    ON comments.userId = users.id
+    WHERE parent_comment = ${parentId}
+    ORDER BY created_date DESC`;
+    const [comments] = await database.pool.query(query);
+
+    return comments;
+};
+
 const getNumberOfComments = async postId => {
     const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN comments WHERE posts.id = comments.postId && posts.id = ${postId} GROUP BY posts.id`;
 
@@ -74,6 +86,7 @@ const eraseComment = async commentId => {
 
 module.exports = {
     getComments,
+    getCommentReplies,
     getCommentById,
     insertComment,
     respondComment,
