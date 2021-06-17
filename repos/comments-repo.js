@@ -10,7 +10,7 @@ const getCommentById = async id => {
 
 const getComments = async postId => {
     const query = SQL`SELECT comments.id AS "commentId",
-    userId, postId, parent_comment AS parentId, text, created_date, username, avatar
+    userId, postId, parent_comment AS parentId, text, deleted, created_date, username, avatar
     FROM comments INNER JOIN users
     ON comments.userId = users.id
     WHERE postId = ${postId}
@@ -33,7 +33,7 @@ const getCommentReplies = async parentId => {
 };
 
 const getNumberOfComments = async postId => {
-    const query = SQL`SELECT count(posts.id) as Total FROM posts JOIN comments WHERE posts.id = comments.postId && posts.id = ${postId} GROUP BY posts.id`;
+    const query = SQL`SELECT count(comments.id) as Total FROM comments WHERE postId = ${postId}`;
 
     const [result] = await database.pool.query(query);
 
@@ -78,7 +78,7 @@ const respondComment = async data => {
 
 const eraseComment = async commentId => {
     const erasedCommentText = 'Comment deleted.';
-    const updateQuery = SQL`UPDATE comments SET text = ${erasedCommentText} WHERE id = ${commentId}`;
+    const updateQuery = SQL`UPDATE comments SET text = ${erasedCommentText}, deleted = true WHERE id = ${commentId}`;
     await database.pool.query(updateQuery);
 
     return getCommentById(commentId);

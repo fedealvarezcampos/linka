@@ -43,10 +43,6 @@ CREATE TABLE `posts` (
   PRIMARY KEY (`id`)
 );
 
---@block
-
--- ALTER TABLE posts ADD FULLTEXT(title, description, linkTitle, linkDesc);
-
 CREATE FULLTEXT INDEX searchIndex ON posts(title, description, link, linkTitle, linkDesc);
 
 --@block
@@ -57,6 +53,7 @@ CREATE TABLE `comments` (
   `postId` int NOT NULL,
   `text` varchar(511) NOT NULL,
   `parent_comment` int DEFAULT NULL,
+  `deleted` BOOLEAN DEFAULT false,
   `created_date` DATETIME,
   PRIMARY KEY (`id`),
   FOREIGN KEY (userId)

@@ -63,6 +63,7 @@ async function postComment(req, res, next) {
             userId: comment.userId,
             postId: comment.postId,
             text: comment.text,
+            deleted: comment.deleted,
             created_date: comment.created_date,
             username: user.username,
             avatar: user.avatar,
@@ -119,6 +120,7 @@ async function replyToComment(req, res, next) {
             postId: commentReply.postId,
             text: commentReply.text,
             parent_comment: commentReply.parent_comment,
+            deleted: commentReply.deleted,
             created_date: commentReply.created_date,
             username: user.username,
             avatar: user.avatar,
@@ -175,9 +177,9 @@ async function eraseComment(req, res, next) {
             throw error;
         }
 
-        const erasedComment = await commentsRepository.eraseComment(commentId);
+        await commentsRepository.eraseComment(commentId, postId);
 
-        res.send(erasedComment);
+        res.send({ message: "God's in his heaven, All's right with the world" });
     } catch (err) {
         next(err);
     }
