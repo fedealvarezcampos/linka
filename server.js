@@ -14,6 +14,15 @@ const staticPath = path.resolve(__dirname, 'static');
 const app = express();
 
 app.use(cors());
+
+// app.use((req, res, next) => {
+//     const cacheTime = 60 * 60 * 72;
+//     res.set({
+//         'Cache-Control': `max-age=${cacheTime}`,
+//     });
+//     next();
+// });
+
 app.use(express.json());
 app.use(fileupload());
 

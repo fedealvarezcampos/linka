@@ -94,16 +94,47 @@ async function validateUser(UUID) {
 }
 
 const getRecentActivity = async id => {
-    const query = SQL`SELECT users.avatar AS "avatar",
-        users.username AS "username",
-        posts.title AS "postTitle",
-        posts.id AS "postId",
-        comments.text AS "comment",
-        comments.created_date AS "commentDate"
-        FROM comments INNER JOIN posts ON postId = posts.id
-        INNER JOIN users ON users.id = comments.userId
-        WHERE comments.userId != ${id} && posts.userId = ${id}
-        ORDER BY commentDate DESC`;
+    // const query = SQL`SELECT users.avatar AS "avatar",
+    //     users.username AS "username",
+    //     posts.title AS "postTitle",
+    //     posts.id AS "postId",
+    //     comments.text AS "comment",
+    //     comments.created_date AS "commentDate"
+    //     FROM comments INNER JOIN posts ON postId = posts.id
+    //     INNER JOIN users ON users.id = comments.userId
+    //     WHERE comments.userId != ${id} && posts.userId = ${id}
+    //     ORDER BY commentDate DESC`;
+
+    const query = SQL`SELECT child.text AS "comment",
+    child.id,
+    users.username AS "username",
+    users.avatar AS "avatar",
+    posts.title AS "postTitle",
+    posts.id AS "postId",
+    child.created_date AS "commentDate",
+    child.parent_comment AS parentId
+    FROM comments AS parent
+    INNER JOIN comments AS child
+    ON child.parent_comment = parent.id
+    INNER JOIN users ON child.userId = users.id
+    INNER JOIN posts ON child.postId = posts.id
+    WHERE child.parent_comment = parent.id
+    AND parent.userId = ${id} AND child.userId != ${id} AND child.deleted = 0
+    UNION
+    SELECT comments.text,
+    comments.id,
+    users.username,
+    users.avatar,
+    posts.title,
+    posts.id,
+    comments.created_date,
+    comments.parent_comment
+    FROM comments
+    INNER JOIN posts ON postId = posts.id
+    INNER JOIN users ON users.id = comments.userId
+    WHERE comments.userId != ${id} && posts.userId = ${id}
+    AND comments.deleted = 0
+    ORDER BY commentDate DESC`;
 
     const [comments] = await database.pool.query(query);
 
