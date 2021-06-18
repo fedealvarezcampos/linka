@@ -455,11 +455,26 @@ async function validateUser(req, res, next) {
             throw error;
         }
 
+        const tokenPayload = { id: user.id, username: user.username };
+
+        const token = jwt.sign(tokenPayload, process.env.SECRET, {
+            expiresIn: '5d',
+        });
+
+        const nOfLikes = await usersRepository.likesUserReceived(user.id);
+
         await usersRepository.validateUser(UUID);
 
         res.send({
             id: user.id,
             username: user.username,
+            bio: user.bio,
+            love: nOfLikes,
+            avatar: user.avatar,
+            userSite: user.userSite,
+            userTW: user.userTW,
+            userIG: user.userIG,
+            token,
         });
     } catch (err) {
         next(err);
