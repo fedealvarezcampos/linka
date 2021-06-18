@@ -33,7 +33,7 @@ const getCommentReplies = async parentId => {
 };
 
 const getNumberOfComments = async postId => {
-    const query = SQL`SELECT count(comments.id) as Total FROM comments WHERE postId = ${postId}`;
+    const query = SQL`SELECT count(comments.id) as Total FROM comments WHERE postId = ${postId} AND comments.deleted = 0`;
 
     const [result] = await database.pool.query(query);
 
@@ -76,10 +76,16 @@ const respondComment = async data => {
     return getCommentById(commentId);
 };
 
-const eraseComment = async commentId => {
+const eraseComment = async (commentId, postId) => {
     const erasedCommentText = 'Comment deleted.';
     const updateQuery = SQL`UPDATE comments SET text = ${erasedCommentText}, deleted = true WHERE id = ${commentId}`;
     await database.pool.query(updateQuery);
+
+    const nOfComments = await getNumberOfComments(postId);
+
+    const updateCommentsQuery = SQL`UPDATE posts SET commented = ${nOfComments} WHERE id = ${postId}`;
+
+    await database.pool.query(updateCommentsQuery);
 
     return getCommentById(commentId);
 };
