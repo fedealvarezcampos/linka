@@ -4,6 +4,8 @@ CREATE DATABASE IF NOT EXISTS linka_db;
 
 USE linka_db;
 
+--@block
+
 CREATE TABLE `users` (
     `id` int NOT NULL AUTO_INCREMENT,
     `UUID` VARCHAR(100) DEFAULT NULL,
