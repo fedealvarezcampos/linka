@@ -62,11 +62,11 @@ const schemaPassChange = Joi.object({
 
 const schemaRegister = Joi.object({
     username: Joi.string()
-        .min(4)
-        .max(20)
+        .min(5)
+        .max(10)
         .regex(usernameRegex)
         .required()
-        .error(() => new Error('Username must be 4 to 20 characters long, no spaces.')),
+        .error(() => new Error('Username must be 5 to 10 characters long, no spaces.')),
     email: Joi.string()
         .email()
         .required()
