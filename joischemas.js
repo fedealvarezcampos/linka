@@ -31,16 +31,14 @@ const schemaUserProfile = Joi.object({
         .error(() => new Error('Must be a valid URL.')),
     userTW: Joi.string()
         .allow('')
-        .min(5)
+        .min(0)
         .max(50)
-        .uri()
-        .error(() => new Error('Must be a valid URL.')),
+        .error(() => new Error('Something is not ok with that username.')),
     userIG: Joi.string()
         .allow('')
-        .min(5)
+        .min(0)
         .max(50)
-        .uri()
-        .error(() => new Error('Must be a valid URL.')),
+        .error(() => new Error('Something is not ok with that username.')),
 });
 
 const schemaLogin = Joi.object({

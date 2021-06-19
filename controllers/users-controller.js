@@ -199,13 +199,15 @@ async function updateUser(req, res, next) {
 
         const passwordHash = password && confirmPass && (await bcrypt.hash(password, 10));
 
-        await usersRepository.updateUser(username, {
+        const responseUpdate = await usersRepository.updateUser(username, {
             password: passwordHash,
             bio,
             userSite,
-            userTW,
-            userIG,
+            userTW: `https://twitter.com/${userTW}`,
+            userIG: `https://instagram.com/${userIG}`,
         });
+
+        console.log(responseUpdate);
 
         let image;
 
@@ -224,8 +226,8 @@ async function updateUser(req, res, next) {
             love: nOfLikes,
             avatar: image || user.avatar,
             userSite,
-            userTW,
-            userIG,
+            userTW: responseUpdate.userTW,
+            userIG: responseUpdate.userIG,
             token: token,
         });
     } catch (err) {

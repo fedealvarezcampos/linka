@@ -121,20 +121,8 @@ async function createPost(req, res, next) {
                 'user-agent': 'googlebot',
             },
         });
+
         console.log(linkPreview);
-
-        // let image;
-
-        // if (link.includes('instagram.com')) {
-        //     // image = await uploadImages({ file: linkPreview.favicons[0], dir: 'missedPrevs' });
-
-        //     const options = {
-        //         url: linkPreview.images[0],
-        //         dest: `./static/images/missedPrevs/${uuidv4()}.jpg`, // will be saved to /path/to/dest/photo.jpg
-        //     };
-
-        //     image = await download.image(options);
-        // }
 
         const result = await postsRepository.insertPost({
             link,
