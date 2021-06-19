@@ -106,10 +106,13 @@ const getRecentActivity = async id => {
     FROM comments AS parent
     INNER JOIN comments AS child
     ON child.parent_comment = parent.id
-    INNER JOIN users ON child.userId = users.id
-    INNER JOIN posts ON child.postId = posts.id
+    INNER JOIN users
+    ON child.userId = users.id
+    INNER JOIN posts
+    ON child.postId = posts.id
     WHERE child.parent_comment = parent.id
-    AND parent.userId = ${id} AND child.userId != ${id}
+    AND parent.userId = ${id}
+    AND child.userId != ${id}
     AND child.deleted = 0
     UNION
     SELECT comments.text,
@@ -122,9 +125,13 @@ const getRecentActivity = async id => {
     comments.parent_comment,
     NULL
     FROM comments
-    INNER JOIN posts ON postId = posts.id
-    INNER JOIN users ON users.id = comments.userId
-    WHERE comments.userId != ${id} && posts.userId = ${id}
+    INNER JOIN posts
+    ON comments.postId = posts.id
+    INNER JOIN users
+    ON users.id = comments.userId
+    WHERE comments.userId != ${id}
+    AND comments.parent_comment is NULL
+    AND posts.userId = ${id}
     AND comments.deleted = 0
     ORDER BY commentDate DESC`;
 
