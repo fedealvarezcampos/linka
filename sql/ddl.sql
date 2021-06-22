@@ -81,3 +81,18 @@ CREATE TABLE `likes` (
     REFERENCES posts(id)
     ON DELETE CASCADE
 );
+
+--@block
+
+CREATE TABLE `directMessages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL,
+  `text` varchar(511) NOT NULL,
+  `recipientId` int NOT NULL,
+  `deleted` BOOLEAN DEFAULT false,
+  `created_date` DATETIME,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (userId)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);

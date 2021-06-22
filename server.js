@@ -5,7 +5,7 @@ const cors = require('cors');
 const fileupload = require('express-fileupload');
 const { validateAuth } = require('./middlewares');
 
-const { usersController, commentsController, postsController } = require('./controllers');
+const { usersController, commentsController, postsController, DMController } = require('./controllers');
 
 const { PORT } = process.env;
 
@@ -57,6 +57,11 @@ app.get('/api/posts/:id/comments', commentsController.getComments);
 app.post('/api/posts/:id/comments', validateAuth, commentsController.postComment);
 app.post('/api/posts/:id/comments/:id_comment', validateAuth, commentsController.replyToComment);
 app.delete('/api/posts/:id/comments/:id_comment', validateAuth, commentsController.eraseComment);
+
+// * DMS
+
+app.get('/api/dms/:userId', validateAuth, DMController.getDMs);
+app.post('/api/dms/:userId', validateAuth, DMController.sendDM);
 
 // prettier-ignore
 app.use(async (err, req, res, next) => {
