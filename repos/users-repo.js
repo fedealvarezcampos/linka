@@ -66,7 +66,7 @@ async function updateUser(username, data) {
 async function deleteUser(id) {
     const newDate = new Date();
     const editDate = format(newDate, 'yyyy-MM-dd HH:mm:ss');
-    const deleteString = 'Account suspended.';
+    const deleteString = 'Account suspended';
     const newUUID = uuidv4();
 
     const updateQuery = SQL`UPDATE users SET email = ${newUUID}, username = ${deleteString}, verified = false, bio = null, avatar = null, userSite = null, userTW = null, userIG = null, editDate = ${editDate} WHERE id = ${id}`;
