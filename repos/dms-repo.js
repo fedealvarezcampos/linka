@@ -8,14 +8,33 @@ const getDMById = async id => {
     return comments[0];
 };
 
+const getUsersThatMessagedList = async recipientId => {
+    const query = SQL`SELECT DISTINCT users.username AS "username",
+    userId, avatar
+    FROM directMessages INNER JOIN users
+    ON directMessages.userId = users.id
+    WHERE recipientId = ${recipientId}`;
+
+    const [userList] = await database.pool.query(query);
+
+    return userList;
+};
+
 const getDirectMessages = async data => {
     const query = SQL`SELECT directMessages.id AS "DMId",
     userId, recipientId, text, deleted, created_date, username, avatar
     FROM directMessages INNER JOIN users
     ON directMessages.userId = users.id
     WHERE recipientId = ${data.recipientId}
-    AND senderID = ${data.senderId}
-    ORDER BY created_date DESC`;
+    AND directMessages.userId = ${data.senderId}
+    UNION
+    SELECT directMessages.id AS "DMId",
+    userId, recipientId, text, deleted, created_date, username, avatar
+    FROM directMessages INNER JOIN users
+    ON directMessages.userId = users.id
+    WHERE recipientId = ${data.senderId}
+    AND directMessages.userId = ${data.recipientId}
+    ORDER BY created_date ASC`;
 
     const [directMessages] = await database.pool.query(query);
 
@@ -35,6 +54,7 @@ const insertDirectMessage = async data => {
 
 module.exports = {
     getDMById,
+    getUsersThatMessagedList,
     getDirectMessages,
     insertDirectMessage,
 };

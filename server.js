@@ -15,14 +15,6 @@ const app = express();
 
 app.use(cors());
 
-// app.use((req, res, next) => {
-//     const cacheTime = 60 * 60 * 72;
-//     res.set({
-//         'Cache-Control': `max-age=${cacheTime}`,
-//     });
-//     next();
-// });
-
 app.use(express.json());
 app.use(fileupload());
 
@@ -60,7 +52,8 @@ app.delete('/api/posts/:id/comments/:id_comment', validateAuth, commentsControll
 
 // * DMS
 
-app.get('/api/dms/:userId', validateAuth, DMController.getDMs);
+app.get('/api/dms', validateAuth, DMController.getUserList);
+app.get('/api/dms/:senderId', validateAuth, DMController.getDMs);
 app.post('/api/dms/:userId', validateAuth, DMController.sendDM);
 
 // prettier-ignore

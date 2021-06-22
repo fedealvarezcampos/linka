@@ -1,26 +1,52 @@
 const Joi = require('joi');
 
-const { usersRepository, postsRepository, DMsRepository } = require('../repos');
+const { usersRepository, DMsRepository } = require('../repos');
 
-async function getDMs(req, res, next) {
+async function getUserList(req, res, next) {
     try {
-        const { id: postId } = req.params;
+        const { id: recipientId } = req.auth;
+
         const schema = Joi.number().positive().required();
-        await schema.validateAsync(postId);
+        await schema.validateAsync(recipientId);
 
-        const post = await postsRepository.getPostById(postId);
+        const user = await usersRepository.getUserById(recipientId);
 
-        if (!post) {
-            const error = new Error(`No post there.`);
+        if (!user) {
+            const error = new Error(`User doesn't exist.`);
             error.code = 404;
 
             throw error;
         }
 
-        const directMessages = await DMsRepository.getDirectMessages({ postId });
+        const response = await DMsRepository.getUsersThatMessagedList(recipientId);
+        const userList = [...new Set(response)];
 
-        // res.send(commentReplies);
-        res.send(comments);
+        res.send(userList);
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function getDMs(req, res, next) {
+    try {
+        const { id: recipientId } = req.auth;
+        const { senderId } = req.params;
+
+        const schema = Joi.number().positive().required();
+        await schema.validateAsync(senderId);
+
+        const user = await usersRepository.getUserById(senderId);
+
+        if (!user) {
+            const error = new Error(`User doesn't exist.`);
+            error.code = 404;
+
+            throw error;
+        }
+
+        const directMessages = await DMsRepository.getDirectMessages({ recipientId, senderId });
+
+        res.send(directMessages);
     } catch (err) {
         next(err);
     }
@@ -68,15 +94,16 @@ async function sendDM(req, res, next) {
 
         const message = await DMsRepository.insertDirectMessage({
             text,
-            senderId,
             recipientId,
+            senderId,
         });
 
         res.send({
-            messageId: message.id,
-            senderAvatar: sender.avatar,
-            senderId: message.userId,
+            DMId: message.id,
+            avatar: sender.avatar,
+            userId: message.userId,
             text: message.text,
+            username: sender.username,
             recipientId: message.recipientId,
             recipientName: recipient.username,
             created_date: message.created_date,
@@ -89,4 +116,5 @@ async function sendDM(req, res, next) {
 module.exports = {
     getDMs,
     sendDM,
+    getUserList,
 };
