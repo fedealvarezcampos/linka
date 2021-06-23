@@ -34,7 +34,7 @@ async function postComment(req, res, next) {
 
         const schema = Joi.string()
             .min(5)
-            .max(500)
+            .max(250)
             .error(() => new Error(`Say something that's between 5 and 250 characters.`));
 
         await schema.validateAsync(text);
@@ -83,7 +83,10 @@ async function replyToComment(req, res, next) {
         const { id: postId, id_comment: parentId } = req.params;
         const { id } = req.auth;
 
-        const schema = Joi.string().min(5).max(500);
+        const schema = Joi.string()
+            .min(5)
+            .max(250)
+            .error(() => new Error(`Say something that's between 5 and 250 characters.`));
         await schema.validateAsync(text);
 
         const user = await usersRepository.getUserById(id);
