@@ -13,7 +13,13 @@ const getUsersThatMessagedList = async (recipientId, userId) => {
     recipientId, avatar
     FROM directMessages INNER JOIN users
     ON directMessages.recipientId = users.id
-    WHERE directMessages.userId = ${userId}`;
+    WHERE directMessages.userId = ${userId}
+    UNION
+    SELECT DISTINCT users.username AS "username",
+    userId, avatar
+    FROM directMessages INNER JOIN users
+    ON directMessages.userId = users.id
+    WHERE directMessages.recipientId = ${userId}`;
 
     const [userList] = await database.pool.query(query);
 
