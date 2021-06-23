@@ -18,7 +18,7 @@ async function getUserList(req, res, next) {
             throw error;
         }
 
-        const response = await DMsRepository.getUsersThatMessagedList(recipientId);
+        const response = await DMsRepository.getUsersThatMessagedList(recipientId, recipientId);
         const userList = [...new Set(response)];
 
         res.send(userList);

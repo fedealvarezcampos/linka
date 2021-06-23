@@ -8,12 +8,12 @@ const getDMById = async id => {
     return comments[0];
 };
 
-const getUsersThatMessagedList = async recipientId => {
+const getUsersThatMessagedList = async (recipientId, userId) => {
     const query = SQL`SELECT DISTINCT users.username AS "username",
-    userId, avatar
+    recipientId, avatar
     FROM directMessages INNER JOIN users
-    ON directMessages.userId = users.id
-    WHERE recipientId = ${recipientId}`;
+    ON directMessages.recipientId = users.id
+    WHERE directMessages.userId = ${userId}`;
 
     const [userList] = await database.pool.query(query);
 
