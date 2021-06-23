@@ -5,8 +5,10 @@ const path = require('path');
 
 const uploadDir = path.join(__dirname, process.env.UPLOADPATH);
 
-const uploadImages = async ({ file, dir }) => {
+const uploadImages = async ({ file, dir, userAvatar }) => {
     const targetDir = path.join(uploadDir, dir);
+
+    userAvatar && fs.unlink(targetDir + '/' + userAvatar);
 
     await fs.mkdir(targetDir, { recursive: true });
 

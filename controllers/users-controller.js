@@ -3,6 +3,7 @@ const passComplex = require('joi-password-complexity');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { uploadImages } = require('../helpers');
@@ -212,9 +213,8 @@ async function updateUser(req, res, next) {
         let image;
 
         if (req.files && req.files.avatar) {
-            image = await uploadImages({ file: req.files.avatar, dir: 'avatars' });
+            image = await uploadImages({ file: req.files.avatar, dir: 'avatars', userAvatar: user.avatar });
             await imagesRepository.updateAvatar(id, image);
-            // delete image si ya existe
         }
 
         const nOfLikes = await usersRepository.likesUserReceived(user.id);
