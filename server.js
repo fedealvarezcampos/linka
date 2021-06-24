@@ -14,11 +14,12 @@ const staticPath = path.resolve(__dirname, 'static');
 const app = express();
 
 const whitelist = [
-    `http://localhost:3000`,
-    `http://localhost:3000/`,
     `http://localhost:8080`,
     `http://localhost:8080/`,
-    /linkah.vercel\.com$/,
+    `http://localhost:3000`,
+    `http://localhost:3000/`,
+    `https://linkah.herokuapp.com`,
+    `https://linkah.herokuapp.com/`,
     `https://linkah.vercel.app/`,
     `https://linkah.vercel.app`,
 ];
