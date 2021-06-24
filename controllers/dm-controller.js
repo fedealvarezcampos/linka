@@ -60,7 +60,7 @@ async function sendDM(req, res, next) {
 
         const schema = Joi.string()
             .min(5)
-            .max(500)
+            .max(250)
             .error(() => new Error(`Say something that's between 5 and 250 characters.`));
 
         await schema.validateAsync(text);
@@ -86,7 +86,7 @@ async function sendDM(req, res, next) {
         }
 
         if (sender.id === recipient.id) {
-            const error = new Error(`Don't talk to yourself outside of real life`);
+            const error = new Error(`No need to talk to yourself now`);
             error.code = 404;
 
             throw error;
