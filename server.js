@@ -18,6 +18,7 @@ const whitelist = [
     `http://localhost:3000/`,
     `http://localhost:8080`,
     `http://localhost:8080/`,
+    /linkah.vercel\.com$/,
     `https://linkah.vercel.app/`,
     `https://linkah.vercel.app`,
 ];
