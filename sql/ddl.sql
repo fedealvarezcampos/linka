@@ -1,8 +1,6 @@
-CREATE DATABASE IF NOT EXISTS linka_db;
+-- CREATE DATABASE IF NOT EXISTS linka_db;
 
---@block
-
-USE linka_db;
+-- USE linka_db;
 
 --@block
 
