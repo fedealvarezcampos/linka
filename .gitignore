@@ -1,7 +1,15 @@
 node_modules
+
+.vscode
 .env
 .env.production
-.vscode
+
 localhost.session.sql
 herokuDB.session.sql
-static
+
+static/*
+!static/images
+static/images/*
+!static/images/avatars
+static/images/avatars/*
+!static/images/avatars/default.jpg
