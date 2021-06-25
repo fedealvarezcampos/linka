@@ -3,6 +3,7 @@ const passComplex = require('joi-password-complexity');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
+const { FRONTPATH: frontURL } = process.env;
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -135,7 +136,7 @@ async function registerUser(req, res, next) {
             templateId: 'd-115445c28a684e788f3197a79251ec9d',
             dynamicTemplateData: {
                 name: newUser.username,
-                header: req.headers.host,
+                header: frontURL,
                 uuid: newUser.UUID,
             },
         };
@@ -419,7 +420,7 @@ async function recoverPass(req, res, next) {
             templateId: 'd-266877db2fae4ad1978c23df4bcb584c',
             dynamicTemplateData: {
                 name: user.username,
-                header: req.headers.host,
+                header: frontURL,
                 uuid: user.UUID,
             },
         };
@@ -516,7 +517,7 @@ async function resendValidation(req, res, next) {
             templateId: 'd-115445c28a684e788f3197a79251ec9d',
             dynamicTemplateData: {
                 name: user.username,
-                header: req.headers.host,
+                header: frontURL,
                 uuid: user.UUID,
             },
         };

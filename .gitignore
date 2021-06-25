@@ -1,5 +1,6 @@
 node_modules
 .env
+.env.production
 .vscode
 localhost.session.sql
 herokuDB.session.sql

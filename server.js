@@ -1,7 +1,7 @@
 require('dotenv').config();
-const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const fileupload = require('express-fileupload');
 const { validateAuth } = require('./middlewares');
 
@@ -13,28 +13,7 @@ const staticPath = path.resolve(__dirname, 'static');
 
 const app = express();
 
-const whitelist = [
-    `http://localhost:8080`,
-    `http://localhost:8080/`,
-    `http://localhost:3000`,
-    `http://localhost:3000/`,
-    `https://linkah.herokuapp.com`,
-    `https://linkah.herokuapp.com/`,
-    `https://linkah.vercel.app/`,
-    `https://linkah.vercel.app`,
-];
-
-var corsOptionsDelegate = function (req, callback) {
-    var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true };
-    } else {
-        corsOptions = { origin: false };
-    }
-    callback(null, corsOptions);
-};
-
-app.use(cors(corsOptionsDelegate));
+app.use(cors());
 
 app.use(express.json());
 app.use(fileupload());
