@@ -84,7 +84,6 @@ async function searchPost(req, res, next) {
             .error(() => new Error('Search should be at least 4 characters long.'));
 
         await schema.validateAsync(q);
-        console.log(q);
 
         const posts = await postsRepository.searchPost(q, sort);
         res.send(posts);
@@ -121,8 +120,6 @@ async function createPost(req, res, next) {
                 'user-agent': 'googlebot',
             },
         });
-
-        console.log(linkPreview);
 
         const result = await postsRepository.insertPost({
             link,

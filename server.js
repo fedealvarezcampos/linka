@@ -4,7 +4,6 @@ const cors = require('cors');
 const path = require('path');
 const fileupload = require('express-fileupload');
 const { validateAuth } = require('./middlewares');
-const { uploadToS3 } = require('./helpers');
 
 const { usersController, commentsController, postsController, DMController } = require('./controllers');
 
@@ -31,7 +30,7 @@ app.post('/api/users/changepass/:UUID', usersController.changePass);
 app.get('/api/users/:username', usersController.getProfile);
 app.get('/api/users/validate/:UUID', usersController.validateUser);
 app.get('/api/users/:username/activity', validateAuth, usersController.getRecentActivity);
-app.put('/api/users/:username', validateAuth, uploadToS3, usersController.updateUser);
+app.put('/api/users/:username', validateAuth, usersController.updateUser);
 app.delete('/api/users/:username', validateAuth, usersController.deleteUser);
 
 // * POSTS

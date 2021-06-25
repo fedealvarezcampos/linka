@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
 
 const frontURL = process.env.FRONTPATH;
-console.log(frontURL);
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { uploadImages } = require('../helpers');
@@ -209,8 +208,6 @@ async function updateUser(req, res, next) {
             userTW: `https://twitter.com/${userTW}`,
             userIG: `https://instagram.com/${userIG}`,
         });
-
-        console.log(responseUpdate);
 
         let image;
 

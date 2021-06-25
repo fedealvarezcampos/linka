@@ -68,9 +68,6 @@ async function sendDM(req, res, next) {
         const sender = await usersRepository.getUserById(senderId);
         const recipient = await usersRepository.getUserById(recipientId);
 
-        console.log(sender);
-        console.log(recipient);
-
         if (!sender) {
             const error = new Error(`You don't exist (?)`);
             error.code = 404;
