@@ -10,6 +10,7 @@ herokuDB.session.sql
 static/*
 !static/images
 static/images/*
+!static/images/prevLink.jpg
 !static/images/avatars
 static/images/avatars/*
 !static/images/avatars/default.jpg
