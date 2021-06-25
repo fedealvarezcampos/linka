@@ -3,8 +3,9 @@ const passComplex = require('joi-password-complexity');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sgMail = require('@sendgrid/mail');
-const { FRONTPATH: frontURL } = process.env;
 
+const frontURL = process.env.FRONTPATH;
+console.log(frontURL);
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { uploadImages } = require('../helpers');
