@@ -4,9 +4,11 @@ const UUID = require('uuid');
 const path = require('path');
 const AWS = require('aws-sdk');
 
+const { AWSAccessKeyId, AWSSecretKey, AWSBUCKETNAME } = process.env;
+
 AWS.config.update({
-    accessKeyId: 'AWSAccessKeyId', // Access key ID
-    secretAccesskey: 'AWSSecretKey', // Secret access key
+    accessKeyId: AWSAccessKeyId, // Access key ID
+    secretAccesskey: AWSSecretKey, // Secret access key
     region: 'eu-west-3', //Region
 });
 
@@ -34,9 +36,11 @@ const uploadImages = async ({ file, dir, userAvatar }) => {
     const s3 = new AWS.S3();
 
     const awsParams = {
-        Bucket: 'AWSBUCKETNAME',
-        Key: imageName, // File name you want to save as in S3
+        Bucket: AWSBUCKETNAME,
+        Key: imageName,
         Body: file,
+        Expires: 60,
+        ACL: 'public-read',
     };
 
     s3.upload(awsParams);
