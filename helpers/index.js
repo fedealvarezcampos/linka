@@ -10,9 +10,9 @@ const uploadDir = path.join(__dirname, process.env.UPLOADPATH);
 
 const uploadImages = async ({ file, dir, userAvatar }) => {
     AWS.config.update({
-        accessKeyId: AWS_ACCESS_KEY_ID, // Access key ID
-        secretAccesskey: AWS_SECRET_ACCESS_KEY, // Secret access key
-        region: AWS_REGION, //Region
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccesskey: AWS_SECRET_ACCESS_KEY,
+        region: AWS_REGION,
     });
 
     const imageName = `AV${UUID.v4()}.jpg`;
@@ -37,7 +37,7 @@ const uploadImages = async ({ file, dir, userAvatar }) => {
 
     const params = {
         Bucket: S3_BUCKET,
-        Key: imageName,
+        Key: `images/avatars/${imageName}`,
         Body: finalImage,
         Expires: 60,
         ContentType: 'image/jpeg',
