@@ -1,7 +1,7 @@
 {
-    "name": "linka",
+    "name": "linkah",
     "version": "1.0.0",
-    "description": "Linka Project",
+    "description": "Linkah Project",
     "main": "server.js",
     "directories": {
         "doc": "docs"
@@ -17,17 +17,15 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "bugs": {
-        "url": "https://gitlab.com/Carlos.G.R/linka/issues"
-    },
-    "homepage": "https://gitlab.com/Carlos.G.R/linka#readme",
     "dependencies": {
         "@sendgrid/mail": "^7.4.2",
+        "aws-sdk": "^2.934.0",
         "bcryptjs": "^2.4.3",
         "cheerio-select": "^1.4.0",
         "cors": "^2.8.5",
         "date-fns": "^2.21.1",
         "dotenv": "^8.2.0",
+        "ejs": "^3.1.6",
         "express": "^4.17.1",
         "express-fileupload": "^1.2.1",
         "image-downloader": "^4.0.2",
