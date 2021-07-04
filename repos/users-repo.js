@@ -133,6 +133,22 @@ const getRecentActivity = async id => {
     AND comments.parent_comment is NULL
     AND posts.userId = ${id}
     AND comments.deleted = 0
+    UNION
+    SELECT directMessages.text,
+    directMessages.id,
+    users.username,
+    users.avatar,
+    "DM",
+    NULL,
+    directMessages.created_date as commentDate,
+    NULL,
+    NULL
+    FROM directMessages
+    INNER JOIN users
+    ON directMessages.userId = users.id
+    WHERE directMessages.userId != ${id}
+    AND directMessages.recipientId = ${id}
+    AND directMessages.deleted = 0
     ORDER BY commentDate DESC`;
 
     const [comments] = await database.pool.query(query);
