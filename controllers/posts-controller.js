@@ -225,6 +225,36 @@ async function likePost(req, res, next) {
     }
 }
 
+async function checkLiked(req, res, next) {
+    try {
+        const { id: userId } = req.auth;
+        const { postId } = req.params;
+
+        const user = await usersRepository.getUserById(userId);
+        const post = await postsRepository.getPostById(postId);
+
+        if (!post) {
+            const err = new Error(`No post there.`);
+            err.code = 404;
+
+            throw err;
+        }
+
+        if (user.username === 'Account suspended.') {
+            const err = new Error(`Account no longer exists.`);
+            err.code = 404;
+
+            throw err;
+        }
+
+        const isLikedAlready = await postsRepository.isLikedByUserId(userId, postId);
+
+        res.send(isLikedAlready);
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function deletePost(req, res, next) {
     try {
         const { id: userId } = req.auth;
@@ -261,5 +291,6 @@ module.exports = {
     deletePost,
     getPost,
     likePost,
+    checkLiked,
     sortPosts,
 };
