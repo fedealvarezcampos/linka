@@ -18,6 +18,14 @@ app.use(cors());
 app.use(express.json());
 app.use(fileupload());
 
+app.use((req, res, next) => {
+    // const cacheTime = 60 * 60 * 24;
+    res.set({
+        'Cache-Control': `public`,
+    });
+    next();
+});
+
 app.use('/', express.static(staticPath));
 
 // * USERS
