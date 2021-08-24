@@ -44,7 +44,7 @@ app.delete('/api/users/:username', validateAuth, usersController.deleteUser);
 // * POSTS
 
 app.get('/api/posts', postsController.sortPosts);
-app.get('/api/posts/:id', validateAuth, postsController.getPost);
+app.get('/api/posts/:id', postsController.getPost);
 app.get('/api/posts/:postId/likes', validateAuth, postsController.checkLiked);
 app.get('/api/search', validateAuth, postsController.searchPost);
 app.post('/api/posts', validateAuth, postsController.createPost);
