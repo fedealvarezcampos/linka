@@ -18,8 +18,9 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@sendgrid/mail": "^7.4.2",
+        "@sendgrid/mail": "^7.4.6",
         "aws-sdk": "^2.934.0",
+        "axios": "^0.21.4",
         "bcryptjs": "^2.4.3",
         "cheerio-select": "^1.4.0",
         "cors": "^2.8.5",
