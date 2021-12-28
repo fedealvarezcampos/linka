@@ -1,48 +1,44 @@
 {
-    "name": "linkah",
-    "version": "1.0.0",
-    "description": "Linkah Project",
-    "main": "server.js",
-    "directories": {
-        "doc": "docs"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon server.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+ssh://git@gitlab.com/Carlos.G.R/linka.git"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@sendgrid/mail": "^7.4.6",
-        "aws-sdk": "^2.934.0",
-        "axios": "^0.21.2",
-        "bcryptjs": "^2.4.3",
-        "cheerio-select": "^1.4.0",
-        "cors": "^2.8.5",
-        "date-fns": "^2.21.1",
-        "dotenv": "^8.2.0",
-        "ejs": "^3.1.6",
-        "express": "^4.17.1",
-        "express-fileupload": "^1.2.1",
-        "image-downloader": "^4.0.2",
-        "joi": "^17.4.0",
-        "joi-password-complexity": "^5.1.0",
-        "jsonwebtoken": "^8.5.1",
-        "link-preview-js": "^2.1.6",
-        "multer": "^1.4.2",
-        "mysql2": "^2.2.5",
-        "sharp": "^0.28.2",
-        "sql-template-strings": "^2.2.2",
-        "uuid": "^8.3.2"
-    },
-    "devDependencies": {
-        "eslint": "^7.25.0",
-        "nodemon": "^2.0.9",
-        "prettier": "^2.2.1"
-    }
+	"name": "linkah",
+	"version": "1.0.0",
+	"description": "Linkah",
+	"main": "server.js",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "nodemon server.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@sendgrid/mail": "^7.4.6",
+		"aws-sdk": "^2.934.0",
+		"axios": "^0.21.2",
+		"bcryptjs": "^2.4.3",
+		"cheerio-select": "^1.4.0",
+		"cors": "^2.8.5",
+		"date-fns": "^2.21.1",
+		"dotenv": "^8.2.0",
+		"ejs": "^3.1.6",
+		"express": "^4.17.1",
+		"express-fileupload": "^1.2.1",
+		"image-downloader": "^4.0.2",
+		"joi": "^17.4.0",
+		"joi-password-complexity": "^5.1.0",
+		"jsonwebtoken": "^8.5.1",
+		"link-preview-js": "^2.1.6",
+		"multer": "^1.4.2",
+		"mysql2": "^2.2.5",
+		"sharp": "^0.28.2",
+		"sql-template-strings": "^2.2.2",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"eslint": "^7.25.0",
+		"nodemon": "^2.0.9",
+		"prettier": "^2.2.1"
+	}
 }
